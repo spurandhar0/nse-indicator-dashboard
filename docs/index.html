@@ -170,6 +170,7 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
   <div class="tab" onclick="showTab('fe')">⏱ Force Exit</div>
   <div class="tab" onclick="showTab('performance')">🏆 Performance</div>
   <div class="tab" onclick="showTab('indices')">📈 Indices Detail</div>
+  <div class="tab" onclick="showTab('mtf')">📦 MTF Output</div>
 </div>
 
 <!-- ── OVERVIEW TAB ── -->
@@ -206,6 +207,35 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
 
 <!-- ── OPEN POSITIONS TAB ── -->
 <div id="tab-open" class="content">
+  <!-- Stats cards -->
+  <div class="stats-row" id="open-stats-row">
+    <div class="card" style="--accent:#2e7d32">
+      <div class="label">Gainers</div>
+      <div class="value green" id="op-gain-cnt">—</div>
+      <div style="font-size:11px;color:#7a8a9a;margin-top:2px" id="op-gain-amt"></div>
+    </div>
+    <div class="card" style="--accent:#2e7d32">
+      <div class="label">Avg Gain%</div>
+      <div class="value green" id="op-gain-pct">—</div>
+    </div>
+    <div class="card" style="--accent:#c62828">
+      <div class="label">Losers</div>
+      <div class="value red" id="op-loss-cnt">—</div>
+      <div style="font-size:11px;color:#7a8a9a;margin-top:2px" id="op-loss-amt"></div>
+    </div>
+    <div class="card" style="--accent:#c62828">
+      <div class="label">Avg Loss%</div>
+      <div class="value red" id="op-loss-pct">—</div>
+    </div>
+    <div class="card" style="--accent:#1a6fc4">
+      <div class="label">Net P&amp;L (₹)</div>
+      <div class="value" id="op-net-pnl">—</div>
+    </div>
+    <div class="card" style="--accent:#1a6fc4">
+      <div class="label">Total Positions</div>
+      <div class="value blue" id="op-total-cnt">—</div>
+    </div>
+  </div>
   <div class="ctrl-bar">
     <input type="text" id="open-search" placeholder="🔍 Search symbol..." oninput="renderOpen(1)"/>
     <select id="open-sort" onchange="renderOpen(1)">
@@ -272,13 +302,50 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
   </div>
 </div>
 
+<!-- ── MTF OUTPUT TAB ── -->
+<div id="tab-mtf" class="content">
+  <!-- Intro + investment input -->
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
+    <span style="font-size:12px;color:#7a8a9a;">Open positions where <b>LTP &lt; Avg Buy</b> (eligible for MTF buying on dip). Drop% = how far LTP is below avg buy.</span>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+      <label style="font-size:12px;font-weight:600;color:#5a6a7a;">Investment ₹</label>
+      <input type="number" id="mtf-inv-input" value="5000" min="100" step="500"
+             style="width:100px;padding:5px 8px;font-size:13px;border:1px solid #ccd5de;border-radius:5px;"
+             oninput="renderMTF()">
+      <button class="btn btn-csv" onclick="exportCSV('mtf')">⬇ CSV</button>
+      <span class="count-badge" id="mtf-count"></span>
+    </div>
+  </div>
+  <!-- Stats bar -->
+  <div class="stats-row" style="margin-bottom:12px;">
+    <div class="card" style="--accent:#c62828">
+      <div class="label">MTF Eligible</div>
+      <div class="value red" id="mtf-eligible">—</div>
+    </div>
+    <div class="card" style="--accent:#c62828">
+      <div class="label">Avg Drop%</div>
+      <div class="value red" id="mtf-avg-drop">—</div>
+    </div>
+    <div class="card" style="--accent:#1a6fc4">
+      <div class="label">Total Qty</div>
+      <div class="value blue" id="mtf-total-qty">—</div>
+    </div>
+    <div class="card" style="--accent:#1a6fc4">
+      <div class="label">Total Investment ₹</div>
+      <div class="value blue" id="mtf-total-inv">—</div>
+    </div>
+  </div>
+  <div class="tbl-wrap" id="mtf-tbl"></div>
+  <div class="pager" id="mtf-pager"></div>
+</div>
+
 <script>
 let DATA = { signals: [], open: [], closed: [], fe: [], meta: {}, indices: {} };
 const BASE = "data/";
 const PAGE_SIZE_DEFAULT = 100;
 
 // per-tab page state
-const pages = { signals:1, open:1, closed:1, fe:1 };
+const pages = { signals:1, open:1, closed:1, fe:1, mtf:1 };
 
 async function loadData() {
   try {
@@ -317,13 +384,15 @@ function renderAll() {
   renderClosed(1);
   renderFE(1);
   renderPerformance();
+  renderOpenStats();
 }
 
 function showTab(name) {
-  const names = ["overview","signals","open","closed","fe","performance","indices"];
+  const names = ["overview","signals","open","closed","fe","performance","indices","mtf"];
   document.querySelectorAll(".tab").forEach((t,i) => t.classList.toggle("active", names[i] === name));
   document.querySelectorAll(".content").forEach(c => c.classList.remove("active"));
   document.getElementById("tab-" + name).classList.add("active");
+  if (name === "mtf") renderMTF(1);
 }
 
 // ── INDICES BAR ────────────────────────────────────────────────────────────
@@ -416,6 +485,30 @@ function buildSignalTable(rows, offset) {
     <td class="green">₹${fmt(r2(s.close*1.10))}</td>
     <td class="red">₹${fmt(r2(s.close*0.75))}</td>
   </tr>`).join('')}</tbody></table>`;
+}
+
+// ── OPEN POSITION STATS ───────────────────────────────────────────────────────
+function renderOpenStats() {
+  const rows   = DATA.open;
+  const gainers = rows.filter(p => (p.gain_pct||0) >= 0);
+  const losers  = rows.filter(p => (p.gain_pct||0) <  0);
+  const gainAmt = gainers.reduce((s,p) => s + (p.pnl||0), 0);
+  const lossAmt = losers.reduce((s,p)  => s + (p.pnl||0), 0);
+  const netPnl  = rows.reduce((s,p)   => s + (p.pnl||0), 0);
+  const avgGainPct = gainers.length ? (gainers.reduce((s,p)=>s+(p.gain_pct||0),0)/gainers.length).toFixed(2) : 0;
+  const avgLossPct = losers.length  ? (losers.reduce((s,p) =>s+(p.gain_pct||0),0)/losers.length).toFixed(2)  : 0;
+
+  document.getElementById("op-total-cnt").textContent = rows.length;
+  document.getElementById("op-gain-cnt").textContent  = gainers.length;
+  document.getElementById("op-gain-amt").textContent  = "₹" + fmt(gainAmt);
+  document.getElementById("op-gain-pct").textContent  = "+" + avgGainPct + "%";
+  document.getElementById("op-loss-cnt").textContent  = losers.length;
+  document.getElementById("op-loss-amt").textContent  = "₹" + fmt(lossAmt);
+  document.getElementById("op-loss-pct").textContent  = avgLossPct + "%";
+  const el   = document.getElementById("op-net-pnl");
+  const sign = netPnl >= 0 ? "+" : "";
+  el.textContent = sign + "₹" + fmt(netPnl);
+  el.className   = "value " + (netPnl >= 0 ? "green" : "red");
 }
 
 // ── OPEN POSITIONS ────────────────────────────────────────────────────────────
@@ -561,6 +654,59 @@ function renderPerformance() {
   }).join('') || '<div class="no-data">No closed trades yet</div>';
 }
 
+// ── MTF OUTPUT ────────────────────────────────────────────────────────────────
+function renderMTF(pg) {
+  if (pg) pages.mtf = pg;
+  const inv  = parseFloat(document.getElementById("mtf-inv-input").value) || 5000;
+  // MTF eligible: open positions where LTP < avg buy
+  let rows   = DATA.open
+    .filter(p => p.ltp && p.avg_buy && parseFloat(p.ltp) < parseFloat(p.avg_buy))
+    .map(p => {
+      const drop = ((parseFloat(p.ltp) - parseFloat(p.avg_buy)) / parseFloat(p.avg_buy) * 100);
+      const qty  = Math.floor(inv / parseFloat(p.ltp));
+      const totalInv = qty * parseFloat(p.ltp);
+      const target5  = parseFloat(p.avg_buy) * 1.05;
+      return { ...p, drop_pct: parseFloat(drop.toFixed(2)), qty, totalInv: parseFloat(totalInv.toFixed(2)), target5: parseFloat(target5.toFixed(2)) };
+    })
+    .sort((a,b) => a.drop_pct - b.drop_pct); // most dropped first (most negative)
+
+  // Stats
+  const totalQty = rows.reduce((s,r)=>s+r.qty, 0);
+  const totalInv = rows.reduce((s,r)=>s+r.totalInv, 0);
+  const avgDrop  = rows.length ? (rows.reduce((s,r)=>s+r.drop_pct,0)/rows.length).toFixed(2) : 0;
+  document.getElementById("mtf-eligible").textContent  = rows.length;
+  document.getElementById("mtf-avg-drop").textContent  = avgDrop + "%";
+  document.getElementById("mtf-total-qty").textContent = totalQty.toLocaleString("en-IN");
+  document.getElementById("mtf-total-inv").textContent = "₹" + fmt(totalInv);
+  document.getElementById("mtf-count").textContent     = rows.length + " eligible";
+
+  const { paged, pager } = paginate(rows, pages.mtf, "mtf");
+  document.getElementById("mtf-tbl").innerHTML   = buildMTFTable(paged, pager.offset);
+  document.getElementById("mtf-pager").innerHTML = renderPager(pager, "mtf");
+}
+
+function buildMTFTable(rows, offset) {
+  if (!rows.length) return '<div class="no-data">🎉 No positions below avg buy — all positions are profitable!</div>';
+  return `<table><thead><tr>
+    <th>#</th><th>Symbol</th><th>Signal Date</th><th>Avg Buy ₹</th>
+    <th>LTP ₹</th><th>Drop%</th><th>Qty</th><th>Investment ₹</th>
+    <th>Target +5% ₹</th><th>Stop −25% ₹</th><th>Buys Done</th><th>Days Held</th>
+  </tr></thead><tbody>${rows.map((p,i) => `<tr>
+    <td class="grey">${offset+i+1}</td>
+    <td><b>${p.symbol}</b></td>
+    <td>${p.signal_date}</td>
+    <td>₹${fmt(p.avg_buy)}</td>
+    <td>₹${fmt(p.ltp)}</td>
+    <td class="red"><b>${p.drop_pct}%</b></td>
+    <td class="blue"><b>${p.qty.toLocaleString("en-IN")}</b></td>
+    <td>₹${fmt(p.totalInv)}</td>
+    <td class="green">₹${fmt(p.target5)}</td>
+    <td class="red">₹${fmt(r2(parseFloat(p.avg_buy)*0.75))}</td>
+    <td class="blue">${p.buys_done}/4</td>
+    <td>${p.market_days}</td>
+  </tr>`).join('')}</tbody></table>`;
+}
+
 // ── PAGINATION ────────────────────────────────────────────────────────────────
 function paginate(rows, page, tab) {
   const ps     = PAGE_SIZE_DEFAULT;
@@ -598,6 +744,7 @@ function goPage(tab, pg) {
   else if (tab === "open") renderOpen();
   else if (tab === "closed") renderClosed();
   else if (tab === "fe") renderFE();
+  else if (tab === "mtf") renderMTF();
 }
 
 // ── CSV EXPORT ────────────────────────────────────────────────────────────────
@@ -619,6 +766,18 @@ function exportCSV(type) {
     headers  = ["Symbol","Signal Date","Exit Date","Avg Buy","Exit Price","PnL","Gain%","Buys","Days"];
     rows     = DATA.fe.map(p=>[p.symbol,p.signal_date,p.exit_date,p.avg_buy,p.exit_price,p.pnl,p.gain_pct,p.buys_done,p.market_days]);
     filename = "force_exit.csv";
+  } else if (type === "mtf") {
+    const inv = parseFloat(document.getElementById("mtf-inv-input").value) || 5000;
+    const mtfRows = DATA.open
+      .filter(p => p.ltp && p.avg_buy && parseFloat(p.ltp) < parseFloat(p.avg_buy))
+      .map(p => {
+        const drop = ((parseFloat(p.ltp)-parseFloat(p.avg_buy))/parseFloat(p.avg_buy)*100).toFixed(2);
+        const qty  = Math.floor(inv / parseFloat(p.ltp));
+        return { ...p, drop_pct: drop, qty };
+      });
+    headers  = ["Symbol","Signal Date","Avg Buy","LTP","Drop%","Qty","Investment","Target+5%","Stop-25%","Buys","Days"];
+    rows     = mtfRows.map(p=>[p.symbol,p.signal_date,p.avg_buy,p.ltp,p.drop_pct,p.qty,r2(p.qty*parseFloat(p.ltp)),r2(parseFloat(p.avg_buy)*1.05),r2(parseFloat(p.avg_buy)*0.75),p.buys_done,p.market_days]);
+    filename = "mtf_output.csv";
   }
   const csv = [headers,...rows].map(r=>r.join(",")).join("\n");
   const a   = document.createElement("a");
