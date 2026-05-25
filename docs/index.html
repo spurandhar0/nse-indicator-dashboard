@@ -3,111 +3,155 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>NSE Indicator Signal Dashboard</title>
+<title>PS Market — NSE Indicator Signal Dashboard</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',sans-serif;background:#0f1117;color:#e0e0e0;font-size:13px}
-header{background:linear-gradient(135deg,#1a1f2e,#0d1b2a);padding:14px 20px;border-bottom:1px solid #2a3550;display:flex;align-items:center;justify-content:space-between}
-header h1{font-size:18px;color:#4fc3f7;font-weight:700;letter-spacing:.5px}
-header .sub{font-size:11px;color:#7a8aaa;margin-top:2px}
-.last-run{font-size:11px;color:#5a6a8a;text-align:right}
-.tabs{display:flex;background:#141821;border-bottom:1px solid #252d40;overflow-x:auto;gap:0}
-.tab{padding:10px 18px;cursor:pointer;color:#7a8aaa;font-size:12px;white-space:nowrap;border-bottom:3px solid transparent;transition:.2s}
-.tab:hover{color:#cdd;background:#1c2235}
-.tab.active{color:#4fc3f7;border-bottom-color:#4fc3f7;background:#161c2e}
+body{font-family:'Segoe UI',sans-serif;background:#080c14;color:#e0e0e0;font-size:13px}
+
+/* ── HEADER ── */
+header{background:linear-gradient(135deg,#0d1524,#111827);padding:10px 20px;border-bottom:2px solid #1e3a5f;display:flex;align-items:center;justify-content:space-between}
+.logo-wrap{display:flex;align-items:center;gap:12px}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,#1565c0,#0288d1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;letter-spacing:-1px;box-shadow:0 2px 10px #0288d160}
+.logo-text{display:flex;flex-direction:column}
+.logo-brand{font-size:17px;font-weight:800;color:#e3f2fd;letter-spacing:.5px}
+.logo-brand span{color:#29b6f6}
+.logo-sub{font-size:10px;color:#4a6a8a;letter-spacing:.3px}
+.header-right{text-align:right}
+.last-run{font-size:11px;color:#4a6a8a}
+.last-run b{color:#7ab8f5}
+
+/* ── TABS ── */
+.tabs{display:flex;background:#0c1220;border-bottom:1px solid #1a2840;overflow-x:auto;gap:0}
+.tab{padding:10px 16px;cursor:pointer;color:#6a7a9a;font-size:12px;font-weight:500;white-space:nowrap;border-bottom:3px solid transparent;transition:.2s}
+.tab:hover{color:#b0c4d8;background:#111827}
+.tab.active{color:#29b6f6;border-bottom-color:#29b6f6;background:#0d1a2e}
 .content{padding:16px;display:none}
 .content.active{display:block}
 
-/* Stats cards */
+/* ── STATS CARDS ── */
 .stats-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
-.card{background:#1a1f2e;border:1px solid #252d40;border-radius:8px;padding:12px 16px;min-width:110px;flex:1}
-.card .label{font-size:10px;color:#5a6a8a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.card{background:#0f1928;border:1px solid #1a2e4a;border-radius:8px;padding:12px 16px;min-width:110px;flex:1;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,#29b6f6)}
+.card .label{font-size:10px;color:#4a6a8a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
 .card .value{font-size:22px;font-weight:700;color:#e0e0e0}
 .card .value.green{color:#4caf50}
-.card .value.red{color:#f44336}
+.card .value.red{color:#ef5350}
 .card .value.yellow{color:#ffc107}
-.card .value.blue{color:#4fc3f7}
+.card .value.blue{color:#29b6f6}
 
-/* Controls bar */
+/* ── CONTROLS ── */
 .ctrl-bar{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-.ctrl-bar input[type=text]{background:#1a1f2e;border:1px solid #2a3550;border-radius:5px;color:#e0e0e0;padding:6px 10px;font-size:12px;width:200px}
-.ctrl-bar input[type=text]:focus{outline:none;border-color:#4fc3f7}
-.ctrl-bar select{background:#1a1f2e;border:1px solid #2a3550;border-radius:5px;color:#e0e0e0;padding:6px 10px;font-size:12px}
+.ctrl-bar input[type=text]{background:#0f1928;border:1px solid #1e3a5f;border-radius:5px;color:#e0e0e0;padding:6px 10px;font-size:12px;width:200px}
+.ctrl-bar input[type=text]:focus{outline:none;border-color:#29b6f6}
+.ctrl-bar select{background:#0f1928;border:1px solid #1e3a5f;border-radius:5px;color:#e0e0e0;padding:6px 10px;font-size:12px}
 .btn{padding:6px 12px;border:none;border-radius:5px;cursor:pointer;font-size:12px;font-weight:600;transition:.2s}
-.btn-csv{background:#2a6049;color:#7fffd4}
-.btn-csv:hover{background:#35785c}
-.btn-sec{background:#1e2d45;color:#7ab8f5;border:1px solid #2a4570}
-.btn-sec:hover{background:#263854}
-.btn-sec.active{background:#1a3f6f;color:#4fc3f7;border-color:#4fc3f7}
+.btn-csv{background:#1b3a2b;color:#69f0ae}
+.btn-csv:hover{background:#224a37}
+.count-badge{font-size:11px;color:#3a5a7a;margin-left:4px}
 
-/* Table */
-.tbl-wrap{overflow-x:auto;border-radius:6px;border:1px solid #1e2740}
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;border-radius:6px;border:1px solid #1a2840;max-height:70vh;overflow-y:auto}
 table{width:100%;border-collapse:collapse;font-size:12px}
-thead th{background:#141c2e;color:#8a9abf;font-weight:600;padding:8px 10px;text-align:left;white-space:nowrap;position:sticky;top:0;z-index:1}
-tbody tr{border-bottom:1px solid #1a2035}
-tbody tr:hover{background:#1c2438}
+thead th{background:#0c1624;color:#6a8aaa;font-weight:600;padding:8px 10px;text-align:left;white-space:nowrap;position:sticky;top:0;z-index:1}
+tbody tr{border-bottom:1px solid #111e30}
+tbody tr:hover{background:#111f33}
 td{padding:7px 10px;white-space:nowrap}
 .green{color:#4caf50}
-.red{color:#f44336}
+.red{color:#ef5350}
 .yellow{color:#ffc107}
-.blue{color:#4fc3f7}
-.grey{color:#6a7a9a}
+.blue{color:#29b6f6}
+.grey{color:#4a6a8a}
 .tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
-.tag-profit{background:#1b3a1e;color:#4caf50}
-.tag-loss{background:#3a1b1b;color:#f44336}
-.tag-fe{background:#3a2e1b;color:#ffc107}
-.tag-open{background:#1b2d3a;color:#4fc3f7}
-.no-data{text-align:center;padding:40px;color:#3a4a6a}
-.loading{text-align:center;padding:40px;color:#4a5a7a}
+.tag-profit{background:#0d2e10;color:#4caf50;border:1px solid #1e4a22}
+.tag-loss{background:#2e0d0d;color:#ef5350;border:1px solid #4a1e1e}
+.tag-fe{background:#2e2a0d;color:#ffc107;border:1px solid #4a3e1e}
+.tag-open{background:#0d1e2e;color:#29b6f6;border:1px solid #1e3a5f}
+.no-data{text-align:center;padding:50px;color:#2a3a5a;font-size:14px}
+.loading{text-align:center;padding:40px;color:#3a4a6a}
 
-/* Perf table */
+/* ── INDICES TAB ── */
+.indices-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:20px}
+.idx-card{background:#0f1928;border:1px solid #1a2e4a;border-radius:10px;padding:16px;position:relative;overflow:hidden;transition:.2s}
+.idx-card:hover{border-color:#29b6f680;background:#111f33}
+.idx-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--c,#29b6f6)}
+.idx-name{font-size:11px;color:#4a6a8a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.idx-price{font-size:26px;font-weight:700;color:#e0e0e0;margin-bottom:4px}
+.idx-change{font-size:13px;font-weight:600}
+.idx-change.up{color:#4caf50}
+.idx-change.down{color:#ef5350}
+.idx-prev{font-size:11px;color:#3a5a7a;margin-top:4px}
+.idx-time{font-size:10px;color:#2a4a6a;margin-top:6px;border-top:1px solid #1a2840;padding-top:6px}
+.idx-update-bar{text-align:right;color:#2a4a6a;font-size:11px;margin-bottom:12px}
+
+/* ── PERFORMANCE ── */
 .perf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:10px}
-.perf-card{background:#1a1f2e;border:1px solid #252d40;border-radius:8px;padding:14px}
-.perf-card h4{font-size:12px;color:#8a9abf;margin-bottom:8px;border-bottom:1px solid #252d40;padding-bottom:6px}
+.perf-card{background:#0f1928;border:1px solid #1a2e4a;border-radius:8px;padding:14px}
+.perf-card h4{font-size:12px;color:#4a6a8a;margin-bottom:8px;border-bottom:1px solid #1a2840;padding-bottom:6px}
 .perf-row{display:flex;justify-content:space-between;margin:4px 0;font-size:12px}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:#0c1220}
+::-webkit-scrollbar-thumb{background:#1e3a5f;border-radius:3px}
 </style>
 </head>
 <body>
 
 <header>
-  <div>
-    <h1>📊 NSE Indicator Signal Dashboard</h1>
-    <div class="sub">Bullish signal simulation • Target 10% • SL 25% • Max 4 Buys • FE 40 market days</div>
+  <div class="logo-wrap">
+    <div class="logo-icon">PS</div>
+    <div class="logo-text">
+      <div class="logo-brand"><span>PS</span> Market</div>
+      <div class="logo-sub">NSE Indicator Signal Dashboard</div>
+    </div>
   </div>
-  <div class="last-run" id="lastRun">Loading...</div>
+  <div class="header-right">
+    <div class="last-run" id="lastRun">Loading data...</div>
+    <div style="font-size:10px;color:#2a4a6a;margin-top:2px">Target +10% • SL −25% • Max 4 Buys • FE 40 days</div>
+  </div>
 </header>
 
 <div class="tabs">
-  <div class="tab active" onclick="showTab('overview')">Overview</div>
-  <div class="tab" onclick="showTab('signals')">Signal History</div>
-  <div class="tab" onclick="showTab('open')">Open Positions</div>
-  <div class="tab" onclick="showTab('closed')">Closed Positions</div>
-  <div class="tab" onclick="showTab('fe')">Force Exit</div>
-  <div class="tab" onclick="showTab('performance')">Performance</div>
+  <div class="tab active" onclick="showTab('overview')">📊 Overview</div>
+  <div class="tab" onclick="showTab('indices')">📈 Indices</div>
+  <div class="tab" onclick="showTab('signals')">🔔 Signals</div>
+  <div class="tab" onclick="showTab('open')">📂 Open</div>
+  <div class="tab" onclick="showTab('closed')">✅ Closed</div>
+  <div class="tab" onclick="showTab('fe')">⏱ Force Exit</div>
+  <div class="tab" onclick="showTab('performance')">🏆 Performance</div>
 </div>
 
 <!-- OVERVIEW TAB -->
 <div id="tab-overview" class="content active">
   <div class="stats-row">
-    <div class="card"><div class="label">Total Signals</div><div class="value blue" id="ov-total">—</div></div>
-    <div class="card"><div class="label">Open</div><div class="value blue" id="ov-open">—</div></div>
-    <div class="card"><div class="label">Profit</div><div class="value green" id="ov-profit">—</div></div>
-    <div class="card"><div class="label">Loss</div><div class="value red" id="ov-loss">—</div></div>
-    <div class="card"><div class="label">Force Exit</div><div class="value yellow" id="ov-fe">—</div></div>
-    <div class="card"><div class="label">Win Rate</div><div class="value green" id="ov-wr">—</div></div>
-    <div class="card"><div class="label">Avg Gain%</div><div class="value green" id="ov-avgg">—</div></div>
-    <div class="card"><div class="label">Avg Loss%</div><div class="value red" id="ov-avgl">—</div></div>
+    <div class="card" style="--accent:#29b6f6"><div class="label">Total Signals</div><div class="value blue" id="ov-total">—</div></div>
+    <div class="card" style="--accent:#29b6f6"><div class="label">Open Positions</div><div class="value blue" id="ov-open">—</div></div>
+    <div class="card" style="--accent:#4caf50"><div class="label">Profit</div><div class="value green" id="ov-profit">—</div></div>
+    <div class="card" style="--accent:#ef5350"><div class="label">Loss</div><div class="value red" id="ov-loss">—</div></div>
+    <div class="card" style="--accent:#ffc107"><div class="label">Force Exit</div><div class="value yellow" id="ov-fe">—</div></div>
+    <div class="card" style="--accent:#4caf50"><div class="label">Win Rate</div><div class="value green" id="ov-wr">—</div></div>
+    <div class="card" style="--accent:#4caf50"><div class="label">Avg Gain%</div><div class="value green" id="ov-avgg">—</div></div>
+    <div class="card" style="--accent:#ef5350"><div class="label">Avg Loss%</div><div class="value red" id="ov-avgl">—</div></div>
   </div>
-  <div id="ov-recent-title" style="color:#8a9abf;font-size:12px;margin-bottom:8px">Recent Signals</div>
+  <div style="color:#4a6a8a;font-size:11px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Recent Signals</div>
   <div class="tbl-wrap" id="ov-recent-tbl"></div>
+</div>
+
+<!-- INDICES TAB -->
+<div id="tab-indices" class="content">
+  <div class="idx-update-bar" id="idx-updated">Loading indices...</div>
+  <div class="indices-grid" id="idx-grid"></div>
+  <div style="color:#2a4a6a;font-size:11px;text-align:center;margin-top:8px">
+    ⟳ Data refreshed daily after market close via workflow
+  </div>
 </div>
 
 <!-- SIGNAL HISTORY TAB -->
 <div id="tab-signals" class="content">
   <div class="ctrl-bar">
-    <input type="text" id="sig-search" placeholder="Search symbol..." oninput="renderSignals()"/>
+    <input type="text" id="sig-search" placeholder="🔍 Search symbol..." oninput="renderSignals()"/>
     <button class="btn btn-csv" onclick="exportCSV('signals')">⬇ Export CSV</button>
-    <span id="sig-count" style="color:#5a6a8a;font-size:11px"></span>
+    <span class="count-badge" id="sig-count"></span>
   </div>
   <div class="tbl-wrap" id="sig-tbl"></div>
 </div>
@@ -115,7 +159,7 @@ td{padding:7px 10px;white-space:nowrap}
 <!-- OPEN POSITIONS TAB -->
 <div id="tab-open" class="content">
   <div class="ctrl-bar">
-    <input type="text" id="open-search" placeholder="Search symbol..." oninput="renderOpen()"/>
+    <input type="text" id="open-search" placeholder="🔍 Search symbol..." oninput="renderOpen()"/>
     <select id="open-sort" onchange="renderOpen()">
       <option value="date_desc">Signal Date ↓</option>
       <option value="gain_desc">Gain% ↓</option>
@@ -123,7 +167,7 @@ td{padding:7px 10px;white-space:nowrap}
       <option value="days_desc">Days Held ↓</option>
     </select>
     <button class="btn btn-csv" onclick="exportCSV('open')">⬇ Export CSV</button>
-    <span id="open-count" style="color:#5a6a8a;font-size:11px"></span>
+    <span class="count-badge" id="open-count"></span>
   </div>
   <div class="tbl-wrap" id="open-tbl"></div>
 </div>
@@ -131,14 +175,14 @@ td{padding:7px 10px;white-space:nowrap}
 <!-- CLOSED POSITIONS TAB -->
 <div id="tab-closed" class="content">
   <div class="ctrl-bar">
-    <input type="text" id="closed-search" placeholder="Search symbol..." oninput="renderClosed()"/>
+    <input type="text" id="closed-search" placeholder="🔍 Search symbol..." oninput="renderClosed()"/>
     <select id="closed-filter" onchange="renderClosed()">
       <option value="all">All Results</option>
       <option value="PROFIT">Profit Only</option>
       <option value="LOSS">Loss Only</option>
     </select>
     <button class="btn btn-csv" onclick="exportCSV('closed')">⬇ Export CSV</button>
-    <span id="closed-count" style="color:#5a6a8a;font-size:11px"></span>
+    <span class="count-badge" id="closed-count"></span>
   </div>
   <div class="tbl-wrap" id="closed-tbl"></div>
 </div>
@@ -146,9 +190,9 @@ td{padding:7px 10px;white-space:nowrap}
 <!-- FORCE EXIT TAB -->
 <div id="tab-fe" class="content">
   <div class="ctrl-bar">
-    <input type="text" id="fe-search" placeholder="Search symbol..." oninput="renderFE()"/>
+    <input type="text" id="fe-search" placeholder="🔍 Search symbol..." oninput="renderFE()"/>
     <button class="btn btn-csv" onclick="exportCSV('fe')">⬇ Export CSV</button>
-    <span id="fe-count" style="color:#5a6a8a;font-size:11px"></span>
+    <span class="count-badge" id="fe-count"></span>
   </div>
   <div class="tbl-wrap" id="fe-tbl"></div>
 </div>
@@ -156,35 +200,37 @@ td{padding:7px 10px;white-space:nowrap}
 <!-- PERFORMANCE TAB -->
 <div id="tab-performance" class="content">
   <div class="stats-row">
-    <div class="card"><div class="label">Total Closed</div><div class="value blue" id="pf-closed">—</div></div>
-    <div class="card"><div class="label">Win Rate</div><div class="value green" id="pf-wr">—</div></div>
-    <div class="card"><div class="label">Avg Profit %</div><div class="value green" id="pf-avgg">—</div></div>
-    <div class="card"><div class="label">Avg Loss %</div><div class="value red" id="pf-avgl">—</div></div>
-    <div class="card"><div class="label">Max Gain %</div><div class="value green" id="pf-maxg">—</div></div>
-    <div class="card"><div class="label">Max Loss %</div><div class="value red" id="pf-maxl">—</div></div>
-    <div class="card"><div class="label">Avg Hold Days</div><div class="value" id="pf-days">—</div></div>
-    <div class="card"><div class="label">FE Count</div><div class="value yellow" id="pf-fe">—</div></div>
+    <div class="card" style="--accent:#29b6f6"><div class="label">Total Closed</div><div class="value blue" id="pf-closed">—</div></div>
+    <div class="card" style="--accent:#4caf50"><div class="label">Win Rate</div><div class="value green" id="pf-wr">—</div></div>
+    <div class="card" style="--accent:#4caf50"><div class="label">Avg Profit%</div><div class="value green" id="pf-avgg">—</div></div>
+    <div class="card" style="--accent:#ef5350"><div class="label">Avg Loss%</div><div class="value red" id="pf-avgl">—</div></div>
+    <div class="card" style="--accent:#4caf50"><div class="label">Max Gain%</div><div class="value green" id="pf-maxg">—</div></div>
+    <div class="card" style="--accent:#ef5350"><div class="label">Max Loss%</div><div class="value red" id="pf-maxl">—</div></div>
+    <div class="card" style="--accent:#ffc107"><div class="label">Avg Hold Days</div><div class="value" id="pf-days">—</div></div>
+    <div class="card" style="--accent:#ffc107"><div class="label">Force Exit</div><div class="value yellow" id="pf-fe">—</div></div>
   </div>
   <div class="perf-grid" id="pf-monthly"></div>
 </div>
 
 <script>
-let DATA = { signals: [], open: [], closed: [], fe: [], meta: {} };
-
+let DATA = { signals: [], open: [], closed: [], fe: [], meta: {}, indices: {} };
 const BASE = "data/";
+
 async function loadData() {
   try {
-    const [metaR, sigR, simR] = await Promise.all([
+    const [metaR, sigR, simR, idxR] = await Promise.all([
       fetch(BASE + "sim_meta.json?" + Date.now()),
-      fetch(BASE + "signals.json?" + Date.now()),
-      fetch(BASE + "sim_results.json?" + Date.now())
+      fetch(BASE + "signals.json?"  + Date.now()),
+      fetch(BASE + "sim_results.json?" + Date.now()),
+      fetch(BASE + "indices.json?"  + Date.now())
     ]);
-    DATA.meta    = metaR.ok    ? await metaR.json()    : {};
-    DATA.signals = sigR.ok     ? await sigR.json()     : [];
-    const sim    = simR.ok     ? await simR.json()     : {};
+    DATA.meta    = metaR.ok ? await metaR.json() : {};
+    DATA.signals = sigR.ok  ? await sigR.json()  : [];
+    const sim    = simR.ok  ? await simR.json()  : {};
     DATA.open    = sim.open    || [];
     DATA.closed  = sim.closed  || [];
     DATA.fe      = sim.fe      || [];
+    DATA.indices = idxR.ok ? await idxR.json() : {};
     renderAll();
   } catch(e) {
     document.getElementById("lastRun").textContent = "⚠ Data load error: " + e.message;
@@ -193,9 +239,12 @@ async function loadData() {
 
 function renderAll() {
   const m = DATA.meta;
+  const ts = m.last_run || '—';
+  const td = m.last_trade_day || '—';
   document.getElementById("lastRun").innerHTML =
-    `Last run: <b>${m.last_run||'—'}</b> &nbsp;|&nbsp; Data: <b>${m.last_trade_day||'—'}</b>`;
+    `Last run: <b>${ts}</b>&nbsp;|&nbsp;Data: <b>${td}</b>`;
   renderOverview();
+  renderIndices();
   renderSignals();
   renderOpen();
   renderClosed();
@@ -204,10 +253,8 @@ function renderAll() {
 }
 
 function showTab(name) {
-  document.querySelectorAll(".tab").forEach((t,i) => {
-    const names = ["overview","signals","open","closed","fe","performance"];
-    t.classList.toggle("active", names[i] === name);
-  });
+  const names = ["overview","indices","signals","open","closed","fe","performance"];
+  document.querySelectorAll(".tab").forEach((t,i) => t.classList.toggle("active", names[i] === name));
   document.querySelectorAll(".content").forEach(c => c.classList.remove("active"));
   document.getElementById("tab-" + name).classList.add("active");
 }
@@ -215,18 +262,39 @@ function showTab(name) {
 // ── OVERVIEW ────────────────────────────────────────────────────────────────
 function renderOverview() {
   const m = DATA.meta;
-  document.getElementById("ov-total").textContent  = m.total_signals  || DATA.signals.length;
-  document.getElementById("ov-open").textContent   = m.open_count     || DATA.open.length;
+  document.getElementById("ov-total").textContent  = m.total_signals  || DATA.signals.length || 0;
+  document.getElementById("ov-open").textContent   = m.open_count     || DATA.open.length || 0;
   document.getElementById("ov-profit").textContent = m.profit_count   || 0;
   document.getElementById("ov-loss").textContent   = m.loss_count     || 0;
-  document.getElementById("ov-fe").textContent     = m.fe_count       || DATA.fe.length;
+  document.getElementById("ov-fe").textContent     = m.fe_count       || DATA.fe.length || 0;
   document.getElementById("ov-wr").textContent     = (m.win_rate      || 0) + "%";
-  document.getElementById("ov-avgg").textContent   = (m.avg_gain_pct  || 0) + "%";
+  document.getElementById("ov-avgg").textContent   = "+" + (m.avg_gain_pct || 0) + "%";
   document.getElementById("ov-avgl").textContent   = (m.avg_loss_pct  || 0) + "%";
-
-  // Recent signals (last 10)
   const recent = [...DATA.signals].reverse().slice(0, 10);
   document.getElementById("ov-recent-tbl").innerHTML = buildSignalTable(recent);
+}
+
+// ── INDICES ──────────────────────────────────────────────────────────────────
+function renderIndices() {
+  const d = DATA.indices;
+  if (!d || !d.indices || !d.indices.length) {
+    document.getElementById("idx-grid").innerHTML = '<div class="no-data">📈 Indices data not yet available — will load after next workflow run</div>';
+    return;
+  }
+  document.getElementById("idx-updated").textContent = "Updated: " + (d.updated || "—");
+  document.getElementById("idx-grid").innerHTML = d.indices.map(idx => {
+    const up   = idx.change_pct >= 0;
+    const arr  = up ? "▲" : "▼";
+    const cls  = up ? "up" : "down";
+    const sign = up ? "+" : "";
+    return `<div class="idx-card" style="--c:${idx.color}">
+      <div class="idx-name">${idx.name}</div>
+      <div class="idx-price">${fmtNum(idx.price)}</div>
+      <div class="idx-change ${cls}">${arr} ${sign}${fmtNum(idx.change)} (${sign}${idx.change_pct}%)</div>
+      <div class="idx-prev">Prev Close: ${fmtNum(idx.prev)}</div>
+      <div class="idx-time">⏰ ${idx.time}</div>
+    </div>`;
+  }).join('');
 }
 
 // ── SIGNAL HISTORY ───────────────────────────────────────────────────────────
@@ -237,54 +305,54 @@ function renderSignals() {
   document.getElementById("sig-count").textContent = rows.length + " signals";
   document.getElementById("sig-tbl").innerHTML = buildSignalTable(rows);
 }
+
 function buildSignalTable(rows) {
-  if (!rows.length) return '<div class="no-data">No data</div>';
+  if (!rows.length) return '<div class="no-data">No signals yet — workflow will populate data</div>';
   return `<table><thead><tr>
     <th>#</th><th>Date</th><th>Symbol</th><th>Close (Buy₁)</th>
-    <th>Bullish</th><th>Total</th><th>Bullish%</th>
-    <th>Target</th><th>Stop</th>
+    <th>Bullish ✓</th><th>Total</th><th>Bull%</th>
+    <th>Target (+10%)</th><th>Stop (−25%)</th>
   </tr></thead><tbody>${rows.map((s,i) => `<tr>
     <td class="grey">${i+1}</td>
     <td>${s.signal_date}</td>
     <td><b>${s.symbol}</b></td>
     <td>₹${fmt(s.close)}</td>
-    <td class="green">${s.bullish_count}</td>
+    <td class="green"><b>${s.bullish_count}</b></td>
     <td>${s.total_count}</td>
     <td class="green"><b>${s.bullish_pct}%</b></td>
-    <td class="green">₹${fmt(round2(s.close*1.10))}</td>
-    <td class="red">₹${fmt(round2(s.close*0.75))}</td>
+    <td class="green">₹${fmt(r2(s.close * 1.10))}</td>
+    <td class="red">₹${fmt(r2(s.close * 0.75))}</td>
   </tr>`).join('')}</tbody></table>`;
 }
 
 // ── OPEN POSITIONS ────────────────────────────────────────────────────────────
 function renderOpen() {
-  const q = (document.getElementById("open-search").value || "").toLowerCase();
-  const sortBy = document.getElementById("open-sort").value;
-  let rows = DATA.open.filter(p => !q || p.symbol.toLowerCase().includes(q));
-  if (sortBy === "gain_desc") rows.sort((a,b) => (b.gain_pct||0) - (a.gain_pct||0));
-  else if (sortBy === "gain_asc") rows.sort((a,b) => (a.gain_pct||0) - (b.gain_pct||0));
-  else if (sortBy === "days_desc") rows.sort((a,b) => (b.market_days||0) - (a.market_days||0));
+  const q   = (document.getElementById("open-search").value || "").toLowerCase();
+  const srt = document.getElementById("open-sort").value;
+  let rows  = DATA.open.filter(p => !q || p.symbol.toLowerCase().includes(q));
+  if (srt === "gain_desc") rows.sort((a,b) => (b.gain_pct||0) - (a.gain_pct||0));
+  else if (srt === "gain_asc") rows.sort((a,b) => (a.gain_pct||0) - (b.gain_pct||0));
+  else if (srt === "days_desc") rows.sort((a,b) => (b.market_days||0) - (a.market_days||0));
   document.getElementById("open-count").textContent = rows.length + " positions";
   if (!rows.length) { document.getElementById("open-tbl").innerHTML = '<div class="no-data">No open positions</div>'; return; }
   document.getElementById("open-tbl").innerHTML = `<table><thead><tr>
     <th>#</th><th>Symbol</th><th>Signal Date</th>
     <th>Buy₁</th><th>Buy₂</th><th>Buy₃</th><th>Buy₄</th>
-    <th>Avg Buy</th><th>LTP</th><th>P&L(₹)</th><th>Gain%</th>
+    <th>Avg Buy</th><th>LTP</th><th>P&L (₹)</th><th>Gain%</th>
     <th>Target</th><th>Stop</th><th>Buys</th><th>Days</th>
   </tr></thead><tbody>${rows.map((p,i) => {
-    const gc = p.gain_pct >= 0 ? 'green' : 'red';
+    const gc = (p.gain_pct||0) >= 0 ? 'green' : 'red';
     return `<tr>
       <td class="grey">${i+1}</td>
-      <td><b>${p.symbol}</b></td>
-      <td>${p.signal_date}</td>
+      <td><b>${p.symbol}</b></td><td>${p.signal_date}</td>
       <td>₹${fmt(p.buy1_price)}</td>
       <td>${p.buy2_price ? '₹'+fmt(p.buy2_price) : '<span class="grey">—</span>'}</td>
       <td>${p.buy3_price ? '₹'+fmt(p.buy3_price) : '<span class="grey">—</span>'}</td>
       <td>${p.buy4_price ? '₹'+fmt(p.buy4_price) : '<span class="grey">—</span>'}</td>
       <td><b>₹${fmt(p.avg_buy)}</b></td>
       <td>₹${fmt(p.ltp)}</td>
-      <td class="${gc}">${p.pnl >= 0 ? '+' : ''}₹${fmt(p.pnl)}</td>
-      <td class="${gc}"><b>${p.gain_pct >= 0 ? '+' : ''}${fmt(p.gain_pct)}%</b></td>
+      <td class="${gc}">${(p.pnl||0) >= 0 ? '+' : ''}₹${fmt(p.pnl)}</td>
+      <td class="${gc}"><b>${(p.gain_pct||0) >= 0 ? '+' : ''}${fmt(p.gain_pct)}%</b></td>
       <td class="green">₹${fmt(p.target)}</td>
       <td class="red">₹${fmt(p.stoploss)}</td>
       <td class="blue">${p.buys_done}/4</td>
@@ -295,9 +363,9 @@ function renderOpen() {
 
 // ── CLOSED POSITIONS ──────────────────────────────────────────────────────────
 function renderClosed() {
-  const q = (document.getElementById("closed-search").value || "").toLowerCase();
+  const q    = (document.getElementById("closed-search").value || "").toLowerCase();
   const filt = document.getElementById("closed-filter").value;
-  let rows = DATA.closed.filter(p => {
+  let rows   = DATA.closed.filter(p => {
     if (q && !p.symbol.toLowerCase().includes(q)) return false;
     if (filt !== "all" && p.result !== filt) return false;
     return true;
@@ -319,15 +387,14 @@ function buildExitTable(rows, showResult) {
   return `<table><thead><tr>
     <th>#</th><th>Symbol</th><th>Signal Date</th><th>Exit Date</th>
     <th>Buy₁</th><th>Avg Buy</th><th>Exit Price</th>
-    <th>P&L(₹)</th><th>Gain%</th><th>Buys</th><th>Days</th>
+    <th>P&L (₹)</th><th>Gain%</th><th>Buys</th><th>Days</th>
     ${showResult ? '<th>Result</th>' : ''}
   </tr></thead><tbody>${rows.map((p,i) => {
-    const gc = (p.gain_pct||0) >= 0 ? 'green' : 'red';
+    const gc  = (p.gain_pct||0) >= 0 ? 'green' : 'red';
     const tag = p.result === 'PROFIT' ? 'tag-profit' : p.result === 'LOSS' ? 'tag-loss' : 'tag-fe';
     return `<tr>
       <td class="grey">${i+1}</td>
-      <td><b>${p.symbol}</b></td>
-      <td>${p.signal_date}</td>
+      <td><b>${p.symbol}</b></td><td>${p.signal_date}</td>
       <td>${p.exit_date||'—'}</td>
       <td>₹${fmt(p.buy1_price)}</td>
       <td><b>₹${fmt(p.avg_buy)}</b></td>
@@ -343,49 +410,46 @@ function buildExitTable(rows, showResult) {
 
 // ── PERFORMANCE ────────────────────────────────────────────────────────────────
 function renderPerformance() {
-  const closed = DATA.closed;
-  const fe     = DATA.fe;
-  const all    = [...closed, ...fe];
+  const closed  = DATA.closed;
+  const fe      = DATA.fe;
+  const all     = [...closed, ...fe];
   const profits = closed.filter(p => p.result === "PROFIT");
   const losses  = closed.filter(p => p.result === "LOSS");
-
-  const totalClosed = closed.length;
-  const wr = totalClosed ? (profits.length / totalClosed * 100).toFixed(1) : 0;
-  const avgG = profits.length ? (profits.reduce((s,p) => s + (p.gain_pct||0), 0) / profits.length).toFixed(2) : 0;
-  const avgL = losses.length  ? (losses.reduce((s,p)  => s + (p.gain_pct||0), 0) / losses.length).toFixed(2)  : 0;
+  const tc   = closed.length;
+  const wr   = tc ? (profits.length / tc * 100).toFixed(1) : 0;
+  const avgG = profits.length ? (profits.reduce((s,p) => s+(p.gain_pct||0),0)/profits.length).toFixed(2) : 0;
+  const avgL = losses.length  ? (losses.reduce((s,p)  => s+(p.gain_pct||0),0)/losses.length).toFixed(2)  : 0;
   const maxG = closed.length  ? Math.max(...closed.map(p => p.gain_pct||0)).toFixed(2) : 0;
   const maxL = closed.length  ? Math.min(...closed.map(p => p.gain_pct||0)).toFixed(2) : 0;
-  const avgDays = all.length  ? (all.reduce((s,p) => s + (p.market_days||0), 0) / all.length).toFixed(1) : 0;
+  const avgD = all.length     ? (all.reduce((s,p) => s+(p.market_days||0),0)/all.length).toFixed(1) : 0;
 
-  document.getElementById("pf-closed").textContent = totalClosed;
+  document.getElementById("pf-closed").textContent = tc;
   document.getElementById("pf-wr").textContent     = wr + "%";
   document.getElementById("pf-avgg").textContent   = "+" + avgG + "%";
   document.getElementById("pf-avgl").textContent   = avgL + "%";
   document.getElementById("pf-maxg").textContent   = "+" + maxG + "%";
   document.getElementById("pf-maxl").textContent   = maxL + "%";
-  document.getElementById("pf-days").textContent   = avgDays;
+  document.getElementById("pf-days").textContent   = avgD;
   document.getElementById("pf-fe").textContent     = fe.length;
 
-  // Monthly breakdown
   const monthly = {};
   for (const p of all) {
-    const d = p.exit_date || p.signal_date || "";
-    const mon = d.slice(0, 7); // YYYY-MM
+    const mon = (p.exit_date || p.signal_date || "").slice(0, 7);
     if (!mon) continue;
-    if (!monthly[mon]) monthly[mon] = { profit:0, loss:0, fe:0, gains:[] };
-    if (p.result === "PROFIT") { monthly[mon].profit++; monthly[mon].gains.push(p.gain_pct||0); }
-    else if (p.result === "LOSS") { monthly[mon].loss++; monthly[mon].gains.push(p.gain_pct||0); }
-    else { monthly[mon].fe++; monthly[mon].gains.push(p.gain_pct||0); }
+    if (!monthly[mon]) monthly[mon] = {profit:0, loss:0, fe:0, gains:[]};
+    if (p.result === "PROFIT")      { monthly[mon].profit++; monthly[mon].gains.push(p.gain_pct||0); }
+    else if (p.result === "LOSS")   { monthly[mon].loss++;   monthly[mon].gains.push(p.gain_pct||0); }
+    else                            { monthly[mon].fe++;     monthly[mon].gains.push(p.gain_pct||0); }
   }
   const months = Object.keys(monthly).sort().reverse();
   document.getElementById("pf-monthly").innerHTML = months.map(m => {
-    const d = monthly[m];
+    const d   = monthly[m];
     const tot = d.profit + d.loss + d.fe;
-    const wr2 = tot ? (d.profit / (d.profit+d.loss) * 100).toFixed(0) : 0;
+    const wr2 = tot ? (d.profit/(d.profit+d.loss)*100).toFixed(0) : 0;
     const ag  = d.gains.length ? (d.gains.reduce((s,x)=>s+x,0)/d.gains.length).toFixed(2) : 0;
     return `<div class="perf-card">
       <h4>📅 ${m}</h4>
-      <div class="perf-row"><span>Total Closed</span><span class="blue">${tot}</span></div>
+      <div class="perf-row"><span>Closed</span><span class="blue">${tot}</span></div>
       <div class="perf-row"><span class="green">Profit</span><span class="green">${d.profit}</span></div>
       <div class="perf-row"><span class="red">Loss</span><span class="red">${d.loss}</span></div>
       <div class="perf-row"><span class="yellow">FE</span><span class="yellow">${d.fe}</span></div>
@@ -399,25 +463,25 @@ function renderPerformance() {
 function exportCSV(type) {
   let rows = [], headers = [], filename = "";
   if (type === "signals") {
-    headers = ["Symbol","Signal Date","Close","Bullish","Total","Bullish%"];
-    rows = DATA.signals.map(s => [s.symbol, s.signal_date, s.close, s.bullish_count, s.total_count, s.bullish_pct]);
+    headers  = ["Symbol","Signal Date","Close","Bullish","Total","Bullish%"];
+    rows     = DATA.signals.map(s => [s.symbol, s.signal_date, s.close, s.bullish_count, s.total_count, s.bullish_pct]);
     filename = "signals.csv";
   } else if (type === "open") {
-    headers = ["Symbol","Signal Date","Buy1","Buy2","Buy3","Buy4","Avg Buy","LTP","PnL","Gain%","Target","Stop","Buys","Days"];
-    rows = DATA.open.map(p => [p.symbol, p.signal_date, p.buy1_price, p.buy2_price||"", p.buy3_price||"", p.buy4_price||"", p.avg_buy, p.ltp, p.pnl, p.gain_pct, p.target, p.stoploss, p.buys_done, p.market_days]);
+    headers  = ["Symbol","Signal Date","Buy1","Buy2","Buy3","Buy4","Avg Buy","LTP","PnL","Gain%","Target","Stop","Buys","Days"];
+    rows     = DATA.open.map(p => [p.symbol, p.signal_date, p.buy1_price, p.buy2_price||"", p.buy3_price||"", p.buy4_price||"", p.avg_buy, p.ltp, p.pnl, p.gain_pct, p.target, p.stoploss, p.buys_done, p.market_days]);
     filename = "open_positions.csv";
   } else if (type === "closed") {
-    headers = ["Symbol","Signal Date","Exit Date","Avg Buy","Exit Price","PnL","Gain%","Result","Buys","Days"];
-    rows = DATA.closed.map(p => [p.symbol, p.signal_date, p.exit_date, p.avg_buy, p.exit_price, p.pnl, p.gain_pct, p.result, p.buys_done, p.market_days]);
+    headers  = ["Symbol","Signal Date","Exit Date","Avg Buy","Exit Price","PnL","Gain%","Result","Buys","Days"];
+    rows     = DATA.closed.map(p => [p.symbol, p.signal_date, p.exit_date, p.avg_buy, p.exit_price, p.pnl, p.gain_pct, p.result, p.buys_done, p.market_days]);
     filename = "closed_positions.csv";
   } else if (type === "fe") {
-    headers = ["Symbol","Signal Date","Exit Date","Avg Buy","Exit Price","PnL","Gain%","Buys","Days"];
-    rows = DATA.fe.map(p => [p.symbol, p.signal_date, p.exit_date, p.avg_buy, p.exit_price, p.pnl, p.gain_pct, p.buys_done, p.market_days]);
+    headers  = ["Symbol","Signal Date","Exit Date","Avg Buy","Exit Price","PnL","Gain%","Buys","Days"];
+    rows     = DATA.fe.map(p => [p.symbol, p.signal_date, p.exit_date, p.avg_buy, p.exit_price, p.pnl, p.gain_pct, p.buys_done, p.market_days]);
     filename = "force_exit.csv";
   }
   const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv"}));
+  const a   = document.createElement("a");
+  a.href    = URL.createObjectURL(new Blob([csv], {type:"text/csv"}));
   a.download = filename; a.click();
 }
 
@@ -425,10 +489,16 @@ function exportCSV(type) {
 function fmt(v) {
   if (v === null || v === undefined || v === "") return "—";
   const n = parseFloat(v);
-  if (isNaN(n)) return v;
+  if (isNaN(n)) return String(v);
   return n.toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
 }
-function round2(v) { return Math.round(v * 100) / 100; }
+function fmtNum(v) {
+  if (!v && v !== 0) return "—";
+  const n = parseFloat(v);
+  if (isNaN(n)) return "—";
+  return n.toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function r2(v) { return Math.round(v * 100) / 100; }
 
 loadData();
 </script>
