@@ -59,6 +59,9 @@ header{background:linear-gradient(135deg,#0d1b2a,#132337);padding:10px 20px;disp
 .card .value.red{color:#c62828}
 .card .value.yellow{color:#e65100}
 .card .value.blue{color:#1a6fc4}
+.card .sub-val{font-size:11px;color:#7a8a9a;margin-top:3px}
+.card .sub-val.green{color:#2e7d32}
+.card .sub-val.red{color:#c62828}
 
 /* ── BADGES ── */
 .badges-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
@@ -78,7 +81,7 @@ header{background:linear-gradient(135deg,#0d1b2a,#132337);padding:10px 20px;disp
 .count-badge{font-size:11px;color:#7a8a9a}
 
 /* ── TABLE ── */
-.tbl-wrap{overflow-x:auto;border-radius:6px;border:1px solid #dde3ea;max-height:65vh;overflow-y:auto;background:#fff}
+.tbl-wrap{overflow-x:auto;border-radius:6px;border:1px solid #dde3ea;max-height:62vh;overflow-y:auto;background:#fff}
 table{width:100%;border-collapse:collapse;font-size:12px}
 thead th{background:#0d1b2a;color:#a0b8d0;font-weight:600;padding:8px 10px;text-align:left;white-space:nowrap;position:sticky;top:0;z-index:1}
 tbody tr{border-bottom:1px solid #eef1f5}
@@ -97,25 +100,12 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
 .no-data{text-align:center;padding:50px;color:#aab8c8;font-size:14px}
 
 /* ── PAGINATION ── */
-.pager{display:flex;align-items:center;gap:6px;margin-top:10px;flex-wrap:wrap}
-.pager button{padding:4px 10px;border:1px solid #ccd5de;border-radius:4px;background:#fff;color:#1a2332;cursor:pointer;font-size:12px}
-.pager button:hover{background:#e3f2fd;border-color:#90caf9}
-.pager button.active{background:#1a6fc4;color:#fff;border-color:#1a6fc4}
+.pager{display:flex;align-items:center;gap:5px;margin-top:10px;flex-wrap:wrap;padding:4px 0}
+.pager button{padding:4px 10px;border:1px solid #ccd5de;border-radius:4px;background:#fff;color:#1a2332;cursor:pointer;font-size:12px;min-width:32px}
+.pager button:hover{background:#e3f2fd;border-color:#90caf9;color:#1a6fc4}
+.pager button.active{background:#0d1b2a;color:#fff;border-color:#0d1b2a}
 .pager button:disabled{opacity:.4;cursor:default}
-.pager select{padding:4px 8px;border:1px solid #ccd5de;border-radius:4px;font-size:12px;background:#fff}
-.pager-info{font-size:11px;color:#7a8a9a}
-
-/* ── INDICES CARDS (tab) ── */
-.indices-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:20px}
-.idx-card{background:#fff;border:1px solid #dde3ea;border-radius:10px;padding:16px;position:relative;overflow:hidden;box-shadow:0 1px 4px #0001}
-.idx-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--c,#1a6fc4)}
-.idx-card .name{font-size:11px;color:#7a8a9a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-weight:700}
-.idx-card .price{font-size:26px;font-weight:700;color:#1a2332;margin-bottom:4px}
-.idx-card .chg{font-size:13px;font-weight:600}
-.idx-card .chg.up{color:#2e7d32}
-.idx-card .chg.dn{color:#c62828}
-.idx-card .prev{font-size:11px;color:#7a8a9a;margin-top:4px}
-.idx-card .time{font-size:10px;color:#aab8c8;margin-top:6px;border-top:1px solid #eef1f5;padding-top:6px}
+.pager .pager-info{font-size:11px;color:#7a8a9a;margin-left:6px}
 
 /* ── PERFORMANCE ── */
 .perf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:10px}
@@ -124,9 +114,10 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
 .perf-row{display:flex;justify-content:space-between;margin:4px 0;font-size:12px}
 
 /* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:#eef1f5}
-::-webkit-scrollbar-thumb{background:#ccd5de;border-radius:3px}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:#eef1f5;border-radius:3px}
+::-webkit-scrollbar-thumb{background:#b0bec5;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#78909c}
 </style>
 </head>
 <body>
@@ -169,7 +160,6 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
   <div class="tab" onclick="showTab('closed')">✅ Closed</div>
   <div class="tab" onclick="showTab('fe')">⏱ Force Exit</div>
   <div class="tab" onclick="showTab('performance')">🏆 Performance</div>
-  <div class="tab" onclick="showTab('indices')">📈 Indices Detail</div>
   <div class="tab" onclick="showTab('mtf')">📦 MTF Output</div>
 </div>
 
@@ -207,12 +197,11 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
 
 <!-- ── OPEN POSITIONS TAB ── -->
 <div id="tab-open" class="content">
-  <!-- Stats cards -->
-  <div class="stats-row" id="open-stats-row">
+  <div class="stats-row">
     <div class="card" style="--accent:#2e7d32">
       <div class="label">Gainers</div>
       <div class="value green" id="op-gain-cnt">—</div>
-      <div style="font-size:11px;color:#7a8a9a;margin-top:2px" id="op-gain-amt"></div>
+      <div class="sub-val green" id="op-gain-amt"></div>
     </div>
     <div class="card" style="--accent:#2e7d32">
       <div class="label">Avg Gain%</div>
@@ -221,7 +210,7 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
     <div class="card" style="--accent:#c62828">
       <div class="label">Losers</div>
       <div class="value red" id="op-loss-cnt">—</div>
-      <div style="font-size:11px;color:#7a8a9a;margin-top:2px" id="op-loss-amt"></div>
+      <div class="sub-val red" id="op-loss-amt"></div>
     </div>
     <div class="card" style="--accent:#c62828">
       <div class="label">Avg Loss%</div>
@@ -253,6 +242,35 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
 
 <!-- ── CLOSED POSITIONS TAB ── -->
 <div id="tab-closed" class="content">
+  <!-- Stats cards -->
+  <div class="stats-row">
+    <div class="card" style="--accent:#2e7d32">
+      <div class="label">Profit Trades</div>
+      <div class="value green" id="cl-gain-cnt">—</div>
+      <div class="sub-val green" id="cl-gain-amt"></div>
+    </div>
+    <div class="card" style="--accent:#2e7d32">
+      <div class="label">Avg Gain%</div>
+      <div class="value green" id="cl-gain-pct">—</div>
+    </div>
+    <div class="card" style="--accent:#c62828">
+      <div class="label">Loss Trades</div>
+      <div class="value red" id="cl-loss-cnt">—</div>
+      <div class="sub-val red" id="cl-loss-amt"></div>
+    </div>
+    <div class="card" style="--accent:#c62828">
+      <div class="label">Avg Loss%</div>
+      <div class="value red" id="cl-loss-pct">—</div>
+    </div>
+    <div class="card" style="--accent:#1a6fc4">
+      <div class="label">Net P&amp;L (₹)</div>
+      <div class="value" id="cl-net-pnl">—</div>
+    </div>
+    <div class="card" style="--accent:#1a6fc4">
+      <div class="label">Win Rate</div>
+      <div class="value blue" id="cl-wr">—</div>
+    </div>
+  </div>
   <div class="ctrl-bar">
     <input type="text" id="closed-search" placeholder="🔍 Search symbol..." oninput="renderClosed(1)"/>
     <select id="closed-filter" onchange="renderClosed(1)">
@@ -269,6 +287,35 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
 
 <!-- ── FORCE EXIT TAB ── -->
 <div id="tab-fe" class="content">
+  <!-- Stats cards -->
+  <div class="stats-row">
+    <div class="card" style="--accent:#2e7d32">
+      <div class="label">FE Gainers</div>
+      <div class="value green" id="fe-gain-cnt">—</div>
+      <div class="sub-val green" id="fe-gain-amt"></div>
+    </div>
+    <div class="card" style="--accent:#2e7d32">
+      <div class="label">Avg Gain%</div>
+      <div class="value green" id="fe-gain-pct">—</div>
+    </div>
+    <div class="card" style="--accent:#c62828">
+      <div class="label">FE Losers</div>
+      <div class="value red" id="fe-loss-cnt">—</div>
+      <div class="sub-val red" id="fe-loss-amt"></div>
+    </div>
+    <div class="card" style="--accent:#c62828">
+      <div class="label">Avg Loss%</div>
+      <div class="value red" id="fe-loss-pct">—</div>
+    </div>
+    <div class="card" style="--accent:#1a6fc4">
+      <div class="label">Net P&amp;L (₹)</div>
+      <div class="value" id="fe-net-pnl">—</div>
+    </div>
+    <div class="card" style="--accent:#e65100">
+      <div class="label">Total FE</div>
+      <div class="value yellow" id="fe-total-cnt">—</div>
+    </div>
+  </div>
   <div class="ctrl-bar">
     <input type="text" id="fe-search" placeholder="🔍 Search symbol..." oninput="renderFE(1)"/>
     <button class="btn btn-csv" onclick="exportCSV('fe')">⬇ Export CSV</button>
@@ -293,20 +340,10 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
   <div class="perf-grid" id="pf-monthly"></div>
 </div>
 
-<!-- ── INDICES DETAIL TAB ── -->
-<div id="tab-indices" class="content">
-  <div style="text-align:right;color:#7a8a9a;font-size:11px;margin-bottom:12px" id="idx-updated">Loading indices...</div>
-  <div class="indices-grid" id="idx-grid"></div>
-  <div style="color:#aab8c8;font-size:11px;text-align:center;margin-top:8px">
-    ⟳ Data refreshed daily after market close via workflow
-  </div>
-</div>
-
 <!-- ── MTF OUTPUT TAB ── -->
 <div id="tab-mtf" class="content">
-  <!-- Intro + investment input -->
   <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
-    <span style="font-size:12px;color:#7a8a9a;">Open positions where <b>LTP &lt; Avg Buy</b> (eligible for MTF buying on dip). Drop% = how far LTP is below avg buy.</span>
+    <span style="font-size:12px;color:#7a8a9a;">Open positions where <b>LTP &lt; Avg Buy</b> &amp; <b>LTP ≥ ₹100</b> — eligible for MTF buying on dip. Drop% = distance below avg buy.</span>
     <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
       <label style="font-size:12px;font-weight:600;color:#5a6a7a;">Investment ₹</label>
       <input type="number" id="mtf-inv-input" value="5000" min="100" step="500"
@@ -316,7 +353,6 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
       <span class="count-badge" id="mtf-count"></span>
     </div>
   </div>
-  <!-- Stats bar -->
   <div class="stats-row" style="margin-bottom:12px;">
     <div class="card" style="--accent:#c62828">
       <div class="label">MTF Eligible</div>
@@ -342,18 +378,16 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
 <script>
 let DATA = { signals: [], open: [], closed: [], fe: [], meta: {}, indices: {} };
 const BASE = "data/";
-const PAGE_SIZE_DEFAULT = 100;
-
-// per-tab page state
+const PAGE_SIZE = 100;
 const pages = { signals:1, open:1, closed:1, fe:1, mtf:1 };
 
 async function loadData() {
   try {
     const [metaR, sigR, simR, idxR] = await Promise.all([
-      fetch(BASE + "sim_meta.json?"   + Date.now()),
-      fetch(BASE + "signals.json?"    + Date.now()),
+      fetch(BASE + "sim_meta.json?"    + Date.now()),
+      fetch(BASE + "signals.json?"     + Date.now()),
       fetch(BASE + "sim_results.json?" + Date.now()),
-      fetch(BASE + "indices.json?"    + Date.now())
+      fetch(BASE + "indices.json?"     + Date.now())
     ]);
     DATA.meta    = metaR.ok ? await metaR.json() : {};
     DATA.signals = sigR.ok  ? await sigR.json()  : [];
@@ -378,17 +412,18 @@ function renderAll() {
   document.getElementById("dateLabel").textContent = "📅 " + td;
   renderIndicesBar();
   renderOverview();
-  renderIndices();
   renderSignals(1);
+  renderOpenStats();
   renderOpen(1);
+  renderClosedStats();
   renderClosed(1);
+  renderFEStats();
   renderFE(1);
   renderPerformance();
-  renderOpenStats();
 }
 
 function showTab(name) {
-  const names = ["overview","signals","open","closed","fe","performance","indices","mtf"];
+  const names = ["overview","signals","open","closed","fe","performance","mtf"];
   document.querySelectorAll(".tab").forEach((t,i) => t.classList.toggle("active", names[i] === name));
   document.querySelectorAll(".content").forEach(c => c.classList.remove("active"));
   document.getElementById("tab-" + name).classList.add("active");
@@ -428,37 +463,14 @@ function renderOverview() {
   document.getElementById("ov-recent-tbl").innerHTML = buildSignalTable(recent, 0);
 }
 
-// ── INDICES DETAIL ──────────────────────────────────────────────────────────
-function renderIndices() {
-  const d = DATA.indices;
-  if (!d || !d.indices || !d.indices.length) {
-    document.getElementById("idx-grid").innerHTML = '<div class="no-data">📈 Indices data will load after next workflow run</div>';
-    return;
-  }
-  document.getElementById("idx-updated").textContent = "Updated: " + (d.updated || "—");
-  document.getElementById("idx-grid").innerHTML = d.indices.map(idx => {
-    const up   = idx.change_pct >= 0;
-    const cls  = up ? "up" : "dn";
-    const sign = up ? "▲ +" : "▼ ";
-    return `<div class="idx-card" style="--c:${idx.color||'#1a6fc4'}">
-      <div class="name">${idx.name}</div>
-      <div class="price">${fmtNum(idx.price)}</div>
-      <div class="chg ${cls}">${sign}${fmtNum(idx.change)} (${up?"+":""}${idx.change_pct}%)</div>
-      <div class="prev">Prev Close: ${fmtNum(idx.prev)}</div>
-      <div class="time">⏰ ${idx.time||idx.date||"—"}</div>
-    </div>`;
-  }).join("");
-}
-
 // ── SIGNALS ──────────────────────────────────────────────────────────────────
 function renderSignals(pg) {
   if (pg) pages.signals = pg;
   const q    = (document.getElementById("sig-search").value || "").toLowerCase();
   let rows   = [...DATA.signals].reverse().filter(s => !q || s.symbol.toLowerCase().includes(q));
-  // Badges
   const openSymbols = new Set(DATA.open.map(p => p.symbol));
   const freshCount  = rows.filter(s => !openSymbols.has(s.symbol)).length;
-  const openCount   = rows.filter(s => openSymbols.has(s.symbol)).length;
+  const openCount   = rows.filter(s =>  openSymbols.has(s.symbol)).length;
   document.getElementById("sig-badge-total").textContent = rows.length;
   document.getElementById("sig-badge-fresh").textContent = freshCount;
   document.getElementById("sig-badge-open").textContent  = openCount;
@@ -487,27 +499,25 @@ function buildSignalTable(rows, offset) {
   </tr>`).join('')}</tbody></table>`;
 }
 
-// ── OPEN POSITION STATS ───────────────────────────────────────────────────────
+// ── OPEN STATS ────────────────────────────────────────────────────────────────
 function renderOpenStats() {
-  const rows   = DATA.open;
+  const rows    = DATA.open;
   const gainers = rows.filter(p => (p.gain_pct||0) >= 0);
   const losers  = rows.filter(p => (p.gain_pct||0) <  0);
   const gainAmt = gainers.reduce((s,p) => s + (p.pnl||0), 0);
   const lossAmt = losers.reduce((s,p)  => s + (p.pnl||0), 0);
-  const netPnl  = rows.reduce((s,p)   => s + (p.pnl||0), 0);
-  const avgGainPct = gainers.length ? (gainers.reduce((s,p)=>s+(p.gain_pct||0),0)/gainers.length).toFixed(2) : 0;
-  const avgLossPct = losers.length  ? (losers.reduce((s,p) =>s+(p.gain_pct||0),0)/losers.length).toFixed(2)  : 0;
-
+  const netPnl  = rows.reduce((s,p)    => s + (p.pnl||0), 0);
+  const avgGain = gainers.length ? (gainers.reduce((s,p)=>s+(p.gain_pct||0),0)/gainers.length).toFixed(2) : "0.00";
+  const avgLoss = losers.length  ? (losers.reduce((s,p) =>s+(p.gain_pct||0),0)/losers.length).toFixed(2)  : "0.00";
   document.getElementById("op-total-cnt").textContent = rows.length;
   document.getElementById("op-gain-cnt").textContent  = gainers.length;
   document.getElementById("op-gain-amt").textContent  = "₹" + fmt(gainAmt);
-  document.getElementById("op-gain-pct").textContent  = "+" + avgGainPct + "%";
+  document.getElementById("op-gain-pct").textContent  = "+" + avgGain + "%";
   document.getElementById("op-loss-cnt").textContent  = losers.length;
   document.getElementById("op-loss-amt").textContent  = "₹" + fmt(lossAmt);
-  document.getElementById("op-loss-pct").textContent  = avgLossPct + "%";
-  const el   = document.getElementById("op-net-pnl");
-  const sign = netPnl >= 0 ? "+" : "";
-  el.textContent = sign + "₹" + fmt(netPnl);
+  document.getElementById("op-loss-pct").textContent  = avgLoss + "%";
+  const el = document.getElementById("op-net-pnl");
+  el.textContent = (netPnl>=0?"+":"") + "₹" + fmt(netPnl);
   el.className   = "value " + (netPnl >= 0 ? "green" : "red");
 }
 
@@ -554,6 +564,29 @@ function buildOpenTable(rows, offset) {
   }).join('')}</tbody></table>`;
 }
 
+// ── CLOSED STATS ─────────────────────────────────────────────────────────────
+function renderClosedStats() {
+  const rows    = DATA.closed;
+  const gainers = rows.filter(p => p.result === "PROFIT");
+  const losers  = rows.filter(p => p.result === "LOSS");
+  const gainAmt = gainers.reduce((s,p) => s + (p.pnl||0), 0);
+  const lossAmt = losers.reduce((s,p)  => s + (p.pnl||0), 0);
+  const netPnl  = rows.reduce((s,p)    => s + (p.pnl||0), 0);
+  const avgGain = gainers.length ? (gainers.reduce((s,p)=>s+(p.gain_pct||0),0)/gainers.length).toFixed(2) : "0.00";
+  const avgLoss = losers.length  ? (losers.reduce((s,p) =>s+(p.gain_pct||0),0)/losers.length).toFixed(2)  : "0.00";
+  const wr      = rows.length ? (gainers.length/rows.length*100).toFixed(1) : "0.0";
+  document.getElementById("cl-gain-cnt").textContent = gainers.length;
+  document.getElementById("cl-gain-amt").textContent = "₹" + fmt(gainAmt);
+  document.getElementById("cl-gain-pct").textContent = "+" + avgGain + "%";
+  document.getElementById("cl-loss-cnt").textContent = losers.length;
+  document.getElementById("cl-loss-amt").textContent = "₹" + fmt(lossAmt);
+  document.getElementById("cl-loss-pct").textContent = avgLoss + "%";
+  document.getElementById("cl-wr").textContent       = wr + "%";
+  const el = document.getElementById("cl-net-pnl");
+  el.textContent = (netPnl>=0?"+":"") + "₹" + fmt(netPnl);
+  el.className   = "value " + (netPnl >= 0 ? "green" : "red");
+}
+
 // ── CLOSED POSITIONS ──────────────────────────────────────────────────────────
 function renderClosed(pg) {
   if (pg) pages.closed = pg;
@@ -568,6 +601,28 @@ function renderClosed(pg) {
   const { paged, pager } = paginate(rows, pages.closed, "closed");
   document.getElementById("closed-tbl").innerHTML   = buildExitTable(paged, true, pager.offset);
   document.getElementById("closed-pager").innerHTML = renderPager(pager, "closed");
+}
+
+// ── FORCE EXIT STATS ──────────────────────────────────────────────────────────
+function renderFEStats() {
+  const rows    = DATA.fe;
+  const gainers = rows.filter(p => (p.gain_pct||0) >= 0);
+  const losers  = rows.filter(p => (p.gain_pct||0) <  0);
+  const gainAmt = gainers.reduce((s,p) => s + (p.pnl||0), 0);
+  const lossAmt = losers.reduce((s,p)  => s + (p.pnl||0), 0);
+  const netPnl  = rows.reduce((s,p)    => s + (p.pnl||0), 0);
+  const avgGain = gainers.length ? (gainers.reduce((s,p)=>s+(p.gain_pct||0),0)/gainers.length).toFixed(2) : "0.00";
+  const avgLoss = losers.length  ? (losers.reduce((s,p) =>s+(p.gain_pct||0),0)/losers.length).toFixed(2)  : "0.00";
+  document.getElementById("fe-total-cnt").textContent = rows.length;
+  document.getElementById("fe-gain-cnt").textContent  = gainers.length;
+  document.getElementById("fe-gain-amt").textContent  = "₹" + fmt(gainAmt);
+  document.getElementById("fe-gain-pct").textContent  = "+" + avgGain + "%";
+  document.getElementById("fe-loss-cnt").textContent  = losers.length;
+  document.getElementById("fe-loss-amt").textContent  = "₹" + fmt(lossAmt);
+  document.getElementById("fe-loss-pct").textContent  = avgLoss + "%";
+  const el = document.getElementById("fe-net-pnl");
+  el.textContent = (netPnl>=0?"+":"") + "₹" + fmt(netPnl);
+  el.className   = "value " + (netPnl >= 0 ? "green" : "red");
 }
 
 // ── FORCE EXIT ────────────────────────────────────────────────────────────────
@@ -657,23 +712,26 @@ function renderPerformance() {
 // ── MTF OUTPUT ────────────────────────────────────────────────────────────────
 function renderMTF(pg) {
   if (pg) pages.mtf = pg;
-  const inv  = parseFloat(document.getElementById("mtf-inv-input").value) || 5000;
-  // MTF eligible: open positions where LTP < avg buy
-  let rows   = DATA.open
-    .filter(p => p.ltp && p.avg_buy && parseFloat(p.ltp) < parseFloat(p.avg_buy))
-    .map(p => {
-      const drop = ((parseFloat(p.ltp) - parseFloat(p.avg_buy)) / parseFloat(p.avg_buy) * 100);
-      const qty  = Math.floor(inv / parseFloat(p.ltp));
-      const totalInv = qty * parseFloat(p.ltp);
-      const target5  = parseFloat(p.avg_buy) * 1.05;
-      return { ...p, drop_pct: parseFloat(drop.toFixed(2)), qty, totalInv: parseFloat(totalInv.toFixed(2)), target5: parseFloat(target5.toFixed(2)) };
+  const inv = parseFloat(document.getElementById("mtf-inv-input").value) || 5000;
+  // MTF eligible: LTP < avg buy AND LTP >= 100
+  let rows = DATA.open
+    .filter(p => {
+      const ltp = parseFloat(p.ltp), avg = parseFloat(p.avg_buy);
+      return ltp && avg && ltp < avg && ltp >= 100;
     })
-    .sort((a,b) => a.drop_pct - b.drop_pct); // most dropped first (most negative)
+    .map(p => {
+      const ltp  = parseFloat(p.ltp), avg = parseFloat(p.avg_buy);
+      const drop = ((ltp - avg) / avg * 100);
+      const qty  = Math.floor(inv / ltp);
+      return { ...p, drop_pct: parseFloat(drop.toFixed(2)), qty,
+               totalInv: parseFloat((qty*ltp).toFixed(2)),
+               target5:  parseFloat((avg*1.05).toFixed(2)) };
+    })
+    .sort((a,b) => a.drop_pct - b.drop_pct);
 
-  // Stats
-  const totalQty = rows.reduce((s,r)=>s+r.qty, 0);
-  const totalInv = rows.reduce((s,r)=>s+r.totalInv, 0);
-  const avgDrop  = rows.length ? (rows.reduce((s,r)=>s+r.drop_pct,0)/rows.length).toFixed(2) : 0;
+  const totalQty = rows.reduce((s,r) => s+r.qty, 0);
+  const totalInv = rows.reduce((s,r) => s+r.totalInv, 0);
+  const avgDrop  = rows.length ? (rows.reduce((s,r)=>s+r.drop_pct,0)/rows.length).toFixed(2) : "0.00";
   document.getElementById("mtf-eligible").textContent  = rows.length;
   document.getElementById("mtf-avg-drop").textContent  = avgDrop + "%";
   document.getElementById("mtf-total-qty").textContent = totalQty.toLocaleString("en-IN");
@@ -686,7 +744,7 @@ function renderMTF(pg) {
 }
 
 function buildMTFTable(rows, offset) {
-  if (!rows.length) return '<div class="no-data">🎉 No positions below avg buy — all positions are profitable!</div>';
+  if (!rows.length) return '<div class="no-data">🎉 No eligible MTF positions right now</div>';
   return `<table><thead><tr>
     <th>#</th><th>Symbol</th><th>Signal Date</th><th>Avg Buy ₹</th>
     <th>LTP ₹</th><th>Drop%</th><th>Qty</th><th>Investment ₹</th>
@@ -709,72 +767,65 @@ function buildMTFTable(rows, offset) {
 
 // ── PAGINATION ────────────────────────────────────────────────────────────────
 function paginate(rows, page, tab) {
-  const ps     = PAGE_SIZE_DEFAULT;
   const total  = rows.length;
-  const pages2 = Math.max(1, Math.ceil(total / ps));
-  const pg     = Math.min(Math.max(1, page), pages2);
-  const offset = (pg - 1) * ps;
-  return {
-    paged: rows.slice(offset, offset + ps),
-    pager: { page: pg, pages: pages2, total, offset, tab }
-  };
+  const totalP = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const pg     = Math.min(Math.max(1, page), totalP);
+  const offset = (pg-1) * PAGE_SIZE;
+  return { paged: rows.slice(offset, offset+PAGE_SIZE), pager: {page:pg, pages:totalP, total, offset, tab} };
 }
 
-function renderPager({ page, pages: total, total: rowCount, tab }, tabName) {
+function renderPager({page, pages:total, total:rowCount, tab}) {
   if (total <= 1) return "";
-  const ps   = PAGE_SIZE_DEFAULT;
-  const from = (page-1)*ps+1;
-  const to   = Math.min(page*ps, rowCount);
-  let btns   = "";
-  btns += `<button ${page===1?"disabled":""} onclick="goPage('${tabName}',${page-1})">◀ Prev</button>`;
-  // show up to 7 page buttons around current
+  const from = (page-1)*PAGE_SIZE+1, to = Math.min(page*PAGE_SIZE, rowCount);
+  let btns = `<button ${page===1?"disabled":""} onclick="goPage('${tab}',${page-1})">◀</button>`;
   const lo = Math.max(1, page-3), hi = Math.min(total, page+3);
-  if (lo > 1) btns += `<button onclick="goPage('${tabName}',1)">1</button>${lo>2?'<span>…</span>':""}`;
-  for (let i = lo; i <= hi; i++)
-    btns += `<button class="${i===page?'active':''}" onclick="goPage('${tabName}',${i})">${i}</button>`;
-  if (hi < total) btns += `${hi<total-1?'<span>…</span>':""}<button onclick="goPage('${tabName}',${total})">${total}</button>`;
-  btns += `<button ${page===total?"disabled":""} onclick="goPage('${tabName}',${page+1})">Next ▶</button>`;
+  if (lo > 1) btns += `<button onclick="goPage('${tab}',1)">1</button>${lo>2?'<span style="padding:0 4px;color:#aaa">…</span>':""}`;
+  for (let i=lo; i<=hi; i++)
+    btns += `<button class="${i===page?'active':''}" onclick="goPage('${tab}',${i})">${i}</button>`;
+  if (hi < total) btns += `${hi<total-1?'<span style="padding:0 4px;color:#aaa">…</span>':""}<button onclick="goPage('${tab}',${total})">${total}</button>`;
+  btns += `<button ${page===total?"disabled":""} onclick="goPage('${tab}',${page+1})">▶</button>`;
   btns += `<span class="pager-info">${rowCount} rows | Page ${page}/${total} | Showing ${from}–${to}</span>`;
   return btns;
 }
 
 function goPage(tab, pg) {
   pages[tab] = pg;
-  if (tab === "signals") renderSignals();
-  else if (tab === "open") renderOpen();
-  else if (tab === "closed") renderClosed();
-  else if (tab === "fe") renderFE();
-  else if (tab === "mtf") renderMTF();
+  if      (tab==="signals") renderSignals();
+  else if (tab==="open")    renderOpen();
+  else if (tab==="closed")  renderClosed();
+  else if (tab==="fe")      renderFE();
+  else if (tab==="mtf")     renderMTF();
 }
 
 // ── CSV EXPORT ────────────────────────────────────────────────────────────────
 function exportCSV(type) {
   let rows=[], headers=[], filename="";
-  if (type === "signals") {
+  if (type==="signals") {
     headers  = ["Symbol","Signal Date","Close","Bullish","Total","Bullish%"];
     rows     = DATA.signals.map(s=>[s.symbol,s.signal_date,s.close,s.bullish_count,s.total_count,s.bullish_pct]);
     filename = "signals.csv";
-  } else if (type === "open") {
+  } else if (type==="open") {
     headers  = ["Symbol","Signal Date","Buy1","Buy2","Buy3","Buy4","Avg Buy","LTP","PnL","Gain%","Target","Stop","Buys","Days"];
     rows     = DATA.open.map(p=>[p.symbol,p.signal_date,p.buy1_price,p.buy2_price||"",p.buy3_price||"",p.buy4_price||"",p.avg_buy,p.ltp,p.pnl,p.gain_pct,p.target,p.stoploss,p.buys_done,p.market_days]);
     filename = "open_positions.csv";
-  } else if (type === "closed") {
+  } else if (type==="closed") {
     headers  = ["Symbol","Signal Date","Exit Date","Avg Buy","Exit Price","PnL","Gain%","Result","Buys","Days"];
     rows     = DATA.closed.map(p=>[p.symbol,p.signal_date,p.exit_date,p.avg_buy,p.exit_price,p.pnl,p.gain_pct,p.result,p.buys_done,p.market_days]);
     filename = "closed_positions.csv";
-  } else if (type === "fe") {
+  } else if (type==="fe") {
     headers  = ["Symbol","Signal Date","Exit Date","Avg Buy","Exit Price","PnL","Gain%","Buys","Days"];
     rows     = DATA.fe.map(p=>[p.symbol,p.signal_date,p.exit_date,p.avg_buy,p.exit_price,p.pnl,p.gain_pct,p.buys_done,p.market_days]);
     filename = "force_exit.csv";
-  } else if (type === "mtf") {
+  } else if (type==="mtf") {
     const inv = parseFloat(document.getElementById("mtf-inv-input").value) || 5000;
-    const mtfRows = DATA.open
-      .filter(p => p.ltp && p.avg_buy && parseFloat(p.ltp) < parseFloat(p.avg_buy))
-      .map(p => {
-        const drop = ((parseFloat(p.ltp)-parseFloat(p.avg_buy))/parseFloat(p.avg_buy)*100).toFixed(2);
-        const qty  = Math.floor(inv / parseFloat(p.ltp));
-        return { ...p, drop_pct: drop, qty };
-      });
+    const mtfRows = DATA.open.filter(p => {
+      const ltp=parseFloat(p.ltp),avg=parseFloat(p.avg_buy);
+      return ltp&&avg&&ltp<avg&&ltp>=100;
+    }).map(p=>{
+      const drop=((parseFloat(p.ltp)-parseFloat(p.avg_buy))/parseFloat(p.avg_buy)*100).toFixed(2);
+      const qty=Math.floor(inv/parseFloat(p.ltp));
+      return {...p,drop_pct:drop,qty};
+    });
     headers  = ["Symbol","Signal Date","Avg Buy","LTP","Drop%","Qty","Investment","Target+5%","Stop-25%","Buys","Days"];
     rows     = mtfRows.map(p=>[p.symbol,p.signal_date,p.avg_buy,p.ltp,p.drop_pct,p.qty,r2(p.qty*parseFloat(p.ltp)),r2(parseFloat(p.avg_buy)*1.05),r2(parseFloat(p.avg_buy)*0.75),p.buys_done,p.market_days]);
     filename = "mtf_output.csv";
@@ -793,8 +844,8 @@ function fmt(v) {
   return n.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 function fmtNum(v) {
-  if (!v && v!==0) return "—";
-  const n = parseFloat(v);
+  if (!v&&v!==0) return "—";
+  const n=parseFloat(v);
   if (isNaN(n)) return "—";
   return n.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
 }
