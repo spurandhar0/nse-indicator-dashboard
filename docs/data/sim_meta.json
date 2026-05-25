@@ -1,5 +1,6 @@
 {
-  "last_run": "Not yet run",
+  "last_run": "2026-05-25 08:17 IST",
+  "last_trade_day": "2026-05-22",
   "total_signals": 0,
   "open_count": 0,
   "closed_count": 0,
@@ -8,5 +9,8 @@
   "loss_count": 0,
   "win_rate": 0,
   "avg_gain_pct": 0,
-  "avg_loss_pct": 0
+  "avg_loss_pct": 0,
+  "new_exits": 0,
+  "new_buys_added": 0,
+  "new_positions": 0
 }
