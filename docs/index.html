@@ -177,6 +177,7 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
   </div>
   <div style="color:#7a8a9a;font-size:11px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Recent Signals</div>
   <div class="tbl-wrap" id="ov-recent-tbl"></div>
+  <div class="pager" id="ov-pager"></div>
 </div>
 
 <!-- ── SIGNALS TAB ── -->
@@ -405,7 +406,7 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
 let DATA = { signals: [], open: [], closed: [], fe: [], meta: {}, indices: {} };
 const BASE = "data/";
 const PAGE_SIZE = 25;
-const pages = { signals:1, open:1, closed:1, fe:1, mtf:1 };
+const pages = { overview:1, signals:1, open:1, closed:1, fe:1, mtf:1 };
 
 async function loadData() {
   try {
@@ -488,8 +489,10 @@ function renderOverview() {
   document.getElementById("ov-wr").textContent     = (m.win_rate      || 0) + "%";
   document.getElementById("ov-avgg").textContent   = "+" + (m.avg_gain_pct || 0) + "%";
   document.getElementById("ov-avgl").textContent   = (m.avg_loss_pct  || 0) + "%";
-  const recent = DATA.signals.filter(s => s.signal_date === ovLastDay);
-  document.getElementById("ov-recent-tbl").innerHTML = buildSignalTable(recent, 0);
+  const todaySigs = DATA.signals.filter(s => s.signal_date === ovLastDay);
+  const { paged: recent, pager: ovPager } = paginate(todaySigs, pages.overview, "overview");
+  document.getElementById("ov-recent-tbl").innerHTML = buildSignalTable(recent, ovPager.offset);
+  document.getElementById("ov-pager").innerHTML = renderPager(ovPager, "overview");
 }
 
 
@@ -980,7 +983,8 @@ function renderPager({page, pages:total, total:rowCount, tab}) {
 
 function goPage(tab, pg) {
   pages[tab] = pg;
-  if      (tab==="signals") renderSignals();
+  if      (tab==="overview") renderOverview();
+  else if (tab==="signals") renderSignals();
   else if (tab==="open")    renderOpen();
   else if (tab==="closed")  renderClosed();
   else if (tab==="fe")      renderFE();
