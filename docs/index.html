@@ -166,7 +166,7 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
 <!-- ── OVERVIEW TAB ── -->
 <div id="tab-overview" class="content active">
   <div class="stats-row">
-    <div class="card" style="--accent:#1a6fc4"><div class="label">Total Signals</div><div class="value blue" id="ov-total">—</div></div>
+    <div class="card" style="--accent:#1a6fc4"><div class="label">Today's Signals</div><div class="value blue" id="ov-total">—</div></div>
     <div class="card" style="--accent:#1a6fc4"><div class="label">Open Positions</div><div class="value blue" id="ov-open">—</div></div>
     <div class="card" style="--accent:#2e7d32"><div class="label">Profit</div><div class="value green" id="ov-profit">—</div></div>
     <div class="card" style="--accent:#c62828"><div class="label">Loss</div><div class="value red" id="ov-loss">—</div></div>
@@ -345,18 +345,41 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
   <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
     <span style="font-size:12px;color:#7a8a9a;">Open positions where <b>LTP &lt; Avg Buy</b> &amp; <b>LTP ≥ ₹100</b> — eligible for MTF buying on dip. Drop% = distance below avg buy.</span>
   </div>
-  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
     <input type="text" id="mtf-search" placeholder="🔍 Search symbol..."
-           style="padding:6px 10px;font-size:13px;border:1px solid #ccd5de;border-radius:6px;width:200px;"
+           style="padding:6px 10px;font-size:12px;border:1px solid #ccd5de;border-radius:6px;width:170px;"
            oninput="renderMTF(1)">
+    <select id="mtf-filter" onchange="renderMTF(1)"
+            style="padding:5px 8px;font-size:12px;border:1px solid #ccd5de;border-radius:5px;background:#fff;color:#1a2332;">
+      <option value="all">All Eligible</option>
+      <option value="lt5">Drop &lt; 5%</option>
+      <option value="5to10">Drop 5–10%</option>
+      <option value="gt10">Drop &gt; 10%</option>
+    </select>
     <label style="font-size:12px;font-weight:600;color:#5a6a7a;">Investment ₹</label>
     <input type="number" id="mtf-inv-input" value="5000" min="100" step="500"
-           style="width:100px;padding:5px 8px;font-size:13px;border:1px solid #ccd5de;border-radius:5px;"
-           oninput="renderMTF()">
+           style="width:90px;padding:5px 8px;font-size:12px;border:1px solid #ccd5de;border-radius:5px;"
+           oninput="saveMTFPrefs();renderMTF()">
+    <label style="font-size:12px;font-weight:600;color:#5a6a7a;">Target %</label>
+    <input type="number" id="mtf-tgt-input" value="5" min="1" max="100" step="1"
+           style="width:65px;padding:5px 8px;font-size:12px;border:1px solid #ccd5de;border-radius:5px;"
+           oninput="saveMTFPrefs();renderMTF()">
     <button class="btn btn-csv" onclick="exportCSV('mtf')">⬇ CSV</button>
     <span class="count-badge" id="mtf-count"></span>
   </div>
   <div class="stats-row" style="margin-bottom:12px;">
+    <div class="card" style="--accent:#2e7d32">
+      <div class="label">Open Gainers</div>
+      <div class="value green" id="mtf-gainer-cnt">—</div>
+      <div class="sub-val green" id="mtf-gainer-amt"></div>
+      <div class="sub-val green" id="mtf-gainer-pct"></div>
+    </div>
+    <div class="card" style="--accent:#c62828">
+      <div class="label">Open Losers</div>
+      <div class="value red" id="mtf-loser-cnt">—</div>
+      <div class="sub-val red" id="mtf-loser-amt"></div>
+      <div class="sub-val red" id="mtf-loser-pct"></div>
+    </div>
     <div class="card" style="--accent:#c62828">
       <div class="label">MTF Eligible</div>
       <div class="value red" id="mtf-eligible">—</div>
@@ -381,7 +404,7 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
 <script>
 let DATA = { signals: [], open: [], closed: [], fe: [], meta: {}, indices: {} };
 const BASE = "data/";
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 25;
 const pages = { signals:1, open:1, closed:1, fe:1, mtf:1 };
 
 async function loadData() {
@@ -406,6 +429,7 @@ async function loadData() {
 }
 
 function renderAll() {
+  loadMTFPrefs();
   const m  = DATA.meta;
   const ts = m.last_run || "—";
   const td = m.last_trade_day || "—";
@@ -454,7 +478,9 @@ function renderIndicesBar() {
 // ── OVERVIEW ────────────────────────────────────────────────────────────────
 function renderOverview() {
   const m = DATA.meta;
-  document.getElementById("ov-total").textContent  = m.total_signals  || DATA.signals.length || 0;
+  const ovLastDay = m.last_trade_day || new Date().toISOString().slice(0,10);
+  const todaySigCount = DATA.signals.filter(s => s.signal_date === ovLastDay).length;
+  document.getElementById("ov-total").textContent  = todaySigCount || m.total_signals || 0;
   document.getElementById("ov-open").textContent   = m.open_count     || DATA.open.length    || 0;
   document.getElementById("ov-profit").textContent = m.profit_count   || 0;
   document.getElementById("ov-loss").textContent   = m.loss_count     || 0;
@@ -512,9 +538,12 @@ function renderSignals(pg) {
   let rows   = [...DATA.signals].reverse().filter(s => !q || s.symbol.toLowerCase().includes(q));
   const openSymbols = new Set(DATA.open.map(p => p.symbol));
   // Badges always count across ALL signals (not just filtered view)
-  const allSigs     = DATA.signals;
-  const freshCount  = allSigs.filter(s => !openSymbols.has(s.symbol)).length;
-  const openCount   = allSigs.filter(s =>  openSymbols.has(s.symbol)).length;
+  const allSigs  = DATA.signals;
+  const lastDay  = DATA.meta.last_trade_day || new Date().toISOString().slice(0,10);
+  // Fresh Call = generated on most-recent trading day (new today)
+  // Open Call  = generated on a PREVIOUS day and still in open positions
+  const freshCount = allSigs.filter(s => s.signal_date === lastDay).length;
+  const openCount  = allSigs.filter(s => s.signal_date !== lastDay && openSymbols.has(s.symbol)).length;
   document.getElementById("sig-badge-total").textContent = allSigs.length;
   document.getElementById("sig-badge-fresh").textContent = freshCount;
   document.getElementById("sig-badge-open").textContent  = openCount;
@@ -809,11 +838,41 @@ function renderPerformance() {
   }).join('') || '<div class="no-data">No closed trades yet</div>';
 }
 
+// ── MTF PREFS (localStorage) ──────────────────────────────────────────────────
+function loadMTFPrefs() {
+  const inv = localStorage.getItem("mtf_inv");
+  const tgt = localStorage.getItem("mtf_tgt");
+  if (inv) { const el = document.getElementById("mtf-inv-input"); if(el) el.value = inv; }
+  if (tgt) { const el = document.getElementById("mtf-tgt-input"); if(el) el.value = tgt; }
+}
+function saveMTFPrefs() {
+  const inv = document.getElementById("mtf-inv-input"); if(inv) localStorage.setItem("mtf_inv", inv.value);
+  const tgt = document.getElementById("mtf-tgt-input"); if(tgt) localStorage.setItem("mtf_tgt", tgt.value);
+}
+
 // ── MTF OUTPUT ────────────────────────────────────────────────────────────────
 function renderMTF(pg) {
   if (pg) pages.mtf = pg;
-  const inv = parseFloat(document.getElementById("mtf-inv-input").value) || 5000;
-  const q   = (document.getElementById("mtf-search") ? document.getElementById("mtf-search").value || "" : "").toLowerCase();
+  const inv    = parseFloat(document.getElementById("mtf-inv-input").value) || 5000;
+  const tgtPct = parseFloat(document.getElementById("mtf-tgt-input").value) || 5;
+  const q      = (document.getElementById("mtf-search") ? document.getElementById("mtf-search").value || "" : "").toLowerCase();
+  const filt   = (document.getElementById("mtf-filter") ? document.getElementById("mtf-filter").value : "all");
+
+  // ── Gainers/Losers stats from ALL open positions ──────────────────────────
+  const allOpen   = DATA.open;
+  const gainers   = allOpen.filter(p => (parseFloat(p.gain_pct)||0) >= 0);
+  const losers    = allOpen.filter(p => (parseFloat(p.gain_pct)||0) < 0);
+  const gainerAmt = gainers.reduce((s,p) => s+(p.pnl||0), 0);
+  const loserAmt  = losers.reduce((s,p)  => s+(p.pnl||0), 0);
+  const avgGPct   = gainers.length ? (gainers.reduce((s,p)=>s+(parseFloat(p.gain_pct)||0),0)/gainers.length).toFixed(2) : "0.00";
+  const avgLPct   = losers.length  ? (losers.reduce((s,p) =>s+(parseFloat(p.gain_pct)||0),0)/losers.length).toFixed(2)  : "0.00";
+  document.getElementById("mtf-gainer-cnt").textContent = gainers.length;
+  document.getElementById("mtf-gainer-amt").textContent = "₹" + fmt(gainerAmt);
+  document.getElementById("mtf-gainer-pct").textContent = "+" + avgGPct + "% avg";
+  document.getElementById("mtf-loser-cnt").textContent  = losers.length;
+  document.getElementById("mtf-loser-amt").textContent  = "₹" + fmt(loserAmt);
+  document.getElementById("mtf-loser-pct").textContent  = avgLPct + "% avg";
+
   // MTF eligible: LTP < avg buy AND LTP >= 100
   let rows = DATA.open
     .filter(p => {
@@ -828,9 +887,15 @@ function renderMTF(pg) {
       const qty  = Math.floor(inv / ltp);
       return { ...p, drop_pct: parseFloat(drop.toFixed(2)), qty,
                totalInv: parseFloat((qty*ltp).toFixed(2)),
-               target5:  parseFloat((avg*1.05).toFixed(2)) };
+               targetPrice: parseFloat((avg*(1+tgtPct/100)).toFixed(2)) };
     })
     .sort((a,b) => a.drop_pct - b.drop_pct);
+
+  // Apply drop% filter
+  if (filt === "lt5")   rows = rows.filter(r => Math.abs(r.drop_pct) < 5);
+  else if (filt === "5to10") rows = rows.filter(r => Math.abs(r.drop_pct) >= 5 && Math.abs(r.drop_pct) <= 10);
+  else if (filt === "gt10")  rows = rows.filter(r => Math.abs(r.drop_pct) > 10);
+
   // Apply column sort (overrides default drop% sort)
   rows = applySortRows(rows, "mtf", {
     symbol:   r => r.symbol||"",
@@ -840,7 +905,7 @@ function renderMTF(pg) {
     drop:     r => r.drop_pct,
     qty:      r => r.qty,
     inv:      r => r.totalInv,
-    target:   r => r.target5
+    target:   r => r.targetPrice
   });
 
   const totalQty = rows.reduce((s,r) => s+r.qty, 0);
@@ -853,12 +918,13 @@ function renderMTF(pg) {
   document.getElementById("mtf-count").textContent     = rows.length + " eligible";
 
   const { paged, pager } = paginate(rows, pages.mtf, "mtf");
-  document.getElementById("mtf-tbl").innerHTML   = buildMTFTable(paged, pager.offset);
+  document.getElementById("mtf-tbl").innerHTML   = buildMTFTable(paged, pager.offset, tgtPct);
   document.getElementById("mtf-pager").innerHTML = renderPager(pager, "mtf");
 }
 
-function buildMTFTable(rows, offset) {
+function buildMTFTable(rows, offset, tgtPct) {
   if (!rows.length) return '<div class="no-data">🎉 No eligible MTF positions right now</div>';
+  tgtPct = tgtPct || 5;
   return `<table><thead><tr>
     <th style="cursor:default">#</th>
     ${th("mtf","symbol","Symbol")}
@@ -868,7 +934,7 @@ function buildMTFTable(rows, offset) {
     ${th("mtf","drop","Drop%")}
     ${th("mtf","qty","Qty")}
     ${th("mtf","inv","Investment ₹")}
-    ${th("mtf","target","Target +5% ₹")}
+    ${th("mtf","target","Target +${tgtPct}% ₹")}
     <th>Stop −25% ₹</th><th>Buys Done</th><th>Days Held</th>
   </tr></thead><tbody>${rows.map((p,i) => `<tr>
     <td class="grey">${offset+i+1}</td>
@@ -879,7 +945,7 @@ function buildMTFTable(rows, offset) {
     <td class="red"><b>${p.drop_pct}%</b></td>
     <td class="blue"><b>${p.qty.toLocaleString("en-IN")}</b></td>
     <td>₹${fmt(p.totalInv)}</td>
-    <td class="green">₹${fmt(p.target5)}</td>
+    <td class="green">₹${fmt(p.targetPrice)}</td>
     <td class="red">₹${fmt(r2(parseFloat(p.avg_buy)*0.75))}</td>
     <td class="blue">${p.buys_done}/4</td>
     <td>${p.market_days}</td>
