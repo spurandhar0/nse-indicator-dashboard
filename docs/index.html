@@ -858,10 +858,13 @@ function renderMTF(pg) {
   const q      = (document.getElementById("mtf-search") ? document.getElementById("mtf-search").value || "" : "").toLowerCase();
   const filt   = (document.getElementById("mtf-filter") ? document.getElementById("mtf-filter").value : "all");
 
-  // ── Gainers/Losers stats from ALL open positions ──────────────────────────
-  const allOpen   = DATA.open;
-  const gainers   = allOpen.filter(p => (parseFloat(p.gain_pct)||0) >= 0);
-  const losers    = allOpen.filter(p => (parseFloat(p.gain_pct)||0) < 0);
+  // ── Gainers/Losers stats from MTF-eligible rows only ──────────────────────
+  const mtfBase   = DATA.open.filter(p => {
+    const ltp = parseFloat(p.ltp), avg = parseFloat(p.avg_buy);
+    return ltp && avg && ltp < avg && ltp >= 100;
+  });
+  const gainers   = mtfBase.filter(p => (parseFloat(p.gain_pct)||0) >= 0);
+  const losers    = mtfBase.filter(p => (parseFloat(p.gain_pct)||0) < 0);
   const gainerAmt = gainers.reduce((s,p) => s+(p.pnl||0), 0);
   const loserAmt  = losers.reduce((s,p)  => s+(p.pnl||0), 0);
   const avgGPct   = gainers.length ? (gainers.reduce((s,p)=>s+(parseFloat(p.gain_pct)||0),0)/gainers.length).toFixed(2) : "0.00";
