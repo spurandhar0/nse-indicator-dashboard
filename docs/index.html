@@ -342,16 +342,19 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
 
 <!-- ── MTF OUTPUT TAB ── -->
 <div id="tab-mtf" class="content">
-  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
     <span style="font-size:12px;color:#7a8a9a;">Open positions where <b>LTP &lt; Avg Buy</b> &amp; <b>LTP ≥ ₹100</b> — eligible for MTF buying on dip. Drop% = distance below avg buy.</span>
-    <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
-      <label style="font-size:12px;font-weight:600;color:#5a6a7a;">Investment ₹</label>
-      <input type="number" id="mtf-inv-input" value="5000" min="100" step="500"
-             style="width:100px;padding:5px 8px;font-size:13px;border:1px solid #ccd5de;border-radius:5px;"
-             oninput="renderMTF()">
-      <button class="btn btn-csv" onclick="exportCSV('mtf')">⬇ CSV</button>
-      <span class="count-badge" id="mtf-count"></span>
-    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+    <input type="text" id="mtf-search" placeholder="🔍 Search symbol..."
+           style="padding:6px 10px;font-size:13px;border:1px solid #ccd5de;border-radius:6px;width:200px;"
+           oninput="renderMTF(1)">
+    <label style="font-size:12px;font-weight:600;color:#5a6a7a;">Investment ₹</label>
+    <input type="number" id="mtf-inv-input" value="5000" min="100" step="500"
+           style="width:100px;padding:5px 8px;font-size:13px;border:1px solid #ccd5de;border-radius:5px;"
+           oninput="renderMTF()">
+    <button class="btn btn-csv" onclick="exportCSV('mtf')">⬇ CSV</button>
+    <span class="count-badge" id="mtf-count"></span>
   </div>
   <div class="stats-row" style="margin-bottom:12px;">
     <div class="card" style="--accent:#c62828">
@@ -463,18 +466,67 @@ function renderOverview() {
   document.getElementById("ov-recent-tbl").innerHTML = buildSignalTable(recent, 0);
 }
 
+
+// ── SORTABLE TABLE STATE ──────────────────────────────────────────────────────
+const tblSort = {
+  signals: { col: null, dir: 1 },
+  open:    { col: null, dir: 1 },
+  closed:  { col: null, dir: 1 },
+  fe:      { col: null, dir: 1 },
+  mtf:     { col: null, dir: 1 }
+};
+function sortTbl(tab, col) {
+  const s = tblSort[tab];
+  if (s.col === col) s.dir *= -1; else { s.col = col; s.dir = 1; }
+  if      (tab === "signals") renderSignals(1);
+  else if (tab === "open")    renderOpen(1);
+  else if (tab === "closed")  renderClosed(1);
+  else if (tab === "fe")      renderFE(1);
+  else if (tab === "mtf")     renderMTF(1);
+}
+function sortIcon(tab, col) {
+  const s = tblSort[tab];
+  if (s.col !== col) return '<span style="color:#bbb;font-size:10px;">⇅</span>';
+  return s.dir === 1
+    ? '<span style="color:#1a6fc4;font-size:10px;">▲</span>'
+    : '<span style="color:#1a6fc4;font-size:10px;">▼</span>';
+}
+function th(tab, col, label, style) {
+  const st = style ? ` style="${style}"` : "";
+  return `<th onclick="sortTbl('${tab}','${col}')" style="cursor:pointer;user-select:none;${style||''}">${label} ${sortIcon(tab,col)}</th>`;
+}
+function applySortRows(rows, tab, fields) {
+  const s = tblSort[tab];
+  if (!s.col || !fields[s.col]) return rows;
+  const fn = fields[s.col];
+  return [...rows].sort((a,b) => {
+    const va = fn(a), vb = fn(b);
+    return typeof va === 'string' ? va.localeCompare(vb)*s.dir : (va-vb)*s.dir;
+  });
+}
+
 // ── SIGNALS ──────────────────────────────────────────────────────────────────
 function renderSignals(pg) {
   if (pg) pages.signals = pg;
   const q    = (document.getElementById("sig-search").value || "").toLowerCase();
   let rows   = [...DATA.signals].reverse().filter(s => !q || s.symbol.toLowerCase().includes(q));
   const openSymbols = new Set(DATA.open.map(p => p.symbol));
-  const freshCount  = rows.filter(s => !openSymbols.has(s.symbol)).length;
-  const openCount   = rows.filter(s =>  openSymbols.has(s.symbol)).length;
-  document.getElementById("sig-badge-total").textContent = rows.length;
+  // Badges always count across ALL signals (not just filtered view)
+  const allSigs     = DATA.signals;
+  const freshCount  = allSigs.filter(s => !openSymbols.has(s.symbol)).length;
+  const openCount   = allSigs.filter(s =>  openSymbols.has(s.symbol)).length;
+  document.getElementById("sig-badge-total").textContent = allSigs.length;
   document.getElementById("sig-badge-fresh").textContent = freshCount;
   document.getElementById("sig-badge-open").textContent  = openCount;
   document.getElementById("sig-count").textContent       = rows.length + " signals";
+  rows = applySortRows(rows, "signals", {
+    date:    s => s.signal_date||"",
+    symbol:  s => s.symbol||"",
+    close:   s => parseFloat(s.close)||0,
+    bullish: s => parseFloat(s.bullish_count)||0,
+    total:   s => parseFloat(s.total_count)||0,
+    bull_pct:s => parseFloat(s.bullish_pct)||0
+  });
   const { paged, pager } = paginate(rows, pages.signals, "signals");
   document.getElementById("sig-tbl").innerHTML   = buildSignalTable(paged, pager.offset);
   document.getElementById("sig-pager").innerHTML = renderPager(pager, "signals");
@@ -483,8 +535,13 @@ function renderSignals(pg) {
 function buildSignalTable(rows, offset) {
   if (!rows.length) return '<div class="no-data">No signals yet</div>';
   return `<table><thead><tr>
-    <th>#</th><th>Date</th><th>Symbol</th><th>Close (Buy₁)</th>
-    <th>Bullish ✓</th><th>Total</th><th>Bull%</th>
+    <th style="cursor:default">#</th>
+    ${th("signals","date","Date")}
+    ${th("signals","symbol","Symbol")}
+    ${th("signals","close","Close (Buy₁)")}
+    ${th("signals","bullish","Bullish ✓")}
+    ${th("signals","total","Total")}
+    ${th("signals","bull_pct","Bull%")}
     <th>Target (+10%)</th><th>Stop (−25%)</th>
   </tr></thead><tbody>${rows.map((s,i) => `<tr>
     <td class="grey">${offset+i+1}</td>
@@ -530,6 +587,15 @@ function renderOpen(pg) {
   if      (srt === "gain_desc") rows.sort((a,b) => (b.gain_pct||0)-(a.gain_pct||0));
   else if (srt === "gain_asc")  rows.sort((a,b) => (a.gain_pct||0)-(b.gain_pct||0));
   else if (srt === "days_desc") rows.sort((a,b) => (b.market_days||0)-(a.market_days||0));
+  rows = applySortRows(rows, "open", {
+    symbol:  p => p.symbol||"",
+    date:    p => p.signal_date||"",
+    avg_buy: p => parseFloat(p.avg_buy)||0,
+    ltp:     p => parseFloat(p.ltp)||0,
+    pnl:     p => parseFloat(p.pnl)||0,
+    gain:    p => parseFloat(p.gain_pct)||0,
+    days:    p => parseFloat(p.market_days)||0
+  });
   document.getElementById("open-count").textContent = rows.length + " positions";
   const { paged, pager } = paginate(rows, pages.open, "open");
   document.getElementById("open-tbl").innerHTML   = buildOpenTable(paged, pager.offset);
@@ -539,10 +605,16 @@ function renderOpen(pg) {
 function buildOpenTable(rows, offset) {
   if (!rows.length) return '<div class="no-data">No open positions</div>';
   return `<table><thead><tr>
-    <th>#</th><th>Symbol</th><th>Signal Date</th>
+    <th style="cursor:default">#</th>
+    ${th("open","symbol","Symbol")}
+    ${th("open","date","Signal Date")}
     <th>Buy₁</th><th>Buy₂</th><th>Buy₃</th><th>Buy₄</th>
-    <th>Avg Buy</th><th>LTP</th><th>P&L (₹)</th><th>Gain%</th>
-    <th>Target</th><th>Stop</th><th>Buys</th><th>Days</th>
+    ${th("open","avg_buy","Avg Buy")}
+    ${th("open","ltp","LTP")}
+    ${th("open","pnl","P&L (₹)")}
+    ${th("open","gain","Gain%")}
+    <th>Target</th><th>Stop</th><th>Buys</th>
+    ${th("open","days","Days")}
   </tr></thead><tbody>${rows.map((p,i) => {
     const gc = (p.gain_pct||0) >= 0 ? 'green' : 'red';
     return `<tr>
@@ -597,9 +669,19 @@ function renderClosed(pg) {
     if (filt !== "all" && p.result !== filt) return false;
     return true;
   });
+  rows = applySortRows(rows, "closed", {
+    symbol:    p => p.symbol||"",
+    sig_date:  p => p.signal_date||"",
+    exit_date: p => p.exit_date||"",
+    avg_buy:   p => parseFloat(p.avg_buy)||0,
+    exit_price:p => parseFloat(p.exit_price)||0,
+    pnl:       p => parseFloat(p.pnl)||0,
+    gain:      p => parseFloat(p.gain_pct)||0,
+    days:      p => parseFloat(p.market_days)||0
+  });
   document.getElementById("closed-count").textContent = rows.length + " positions";
   const { paged, pager } = paginate(rows, pages.closed, "closed");
-  document.getElementById("closed-tbl").innerHTML   = buildExitTable(paged, true, pager.offset);
+  document.getElementById("closed-tbl").innerHTML   = buildExitTable(paged, true, "closed", pager.offset);
   document.getElementById("closed-pager").innerHTML = renderPager(pager, "closed");
 }
 
@@ -630,18 +712,36 @@ function renderFE(pg) {
   if (pg) pages.fe = pg;
   const q = (document.getElementById("fe-search").value || "").toLowerCase();
   let rows = DATA.fe.filter(p => !q || p.symbol.toLowerCase().includes(q));
+  rows = applySortRows(rows, "fe", {
+    symbol:    p => p.symbol||"",
+    sig_date:  p => p.signal_date||"",
+    exit_date: p => p.exit_date||"",
+    avg_buy:   p => parseFloat(p.avg_buy)||0,
+    exit_price:p => parseFloat(p.exit_price)||0,
+    pnl:       p => parseFloat(p.pnl)||0,
+    gain:      p => parseFloat(p.gain_pct)||0,
+    days:      p => parseFloat(p.market_days)||0
+  });
   document.getElementById("fe-count").textContent = rows.length + " positions";
   const { paged, pager } = paginate(rows, pages.fe, "fe");
-  document.getElementById("fe-tbl").innerHTML   = buildExitTable(paged, false, pager.offset);
+  document.getElementById("fe-tbl").innerHTML   = buildExitTable(paged, false, "fe", pager.offset);
   document.getElementById("fe-pager").innerHTML = renderPager(pager, "fe");
 }
 
-function buildExitTable(rows, showResult, offset) {
+function buildExitTable(rows, showResult, tabName, offset) {
   if (!rows.length) return '<div class="no-data">No data</div>';
   return `<table><thead><tr>
-    <th>#</th><th>Symbol</th><th>Signal Date</th><th>Exit Date</th>
-    <th>Buy₁</th><th>Avg Buy</th><th>Exit Price</th>
-    <th>P&L (₹)</th><th>Gain%</th><th>Buys</th><th>Days</th>
+    <th style="cursor:default">#</th>
+    ${th(tabName,"symbol","Symbol")}
+    ${th(tabName,"sig_date","Signal Date")}
+    ${th(tabName,"exit_date","Exit Date")}
+    <th>Buy₁</th>
+    ${th(tabName,"avg_buy","Avg Buy")}
+    ${th(tabName,"exit_price","Exit Price")}
+    ${th(tabName,"pnl","P&L (₹)")}
+    ${th(tabName,"gain","Gain%")}
+    <th>Buys</th>
+    ${th(tabName,"days","Days")}
     ${showResult ? '<th>Result</th>' : ''}
   </tr></thead><tbody>${rows.map((p,i) => {
     const gc  = (p.gain_pct||0) >= 0 ? 'green' : 'red';
@@ -713,11 +813,14 @@ function renderPerformance() {
 function renderMTF(pg) {
   if (pg) pages.mtf = pg;
   const inv = parseFloat(document.getElementById("mtf-inv-input").value) || 5000;
+  const q   = (document.getElementById("mtf-search") ? document.getElementById("mtf-search").value || "" : "").toLowerCase();
   // MTF eligible: LTP < avg buy AND LTP >= 100
   let rows = DATA.open
     .filter(p => {
       const ltp = parseFloat(p.ltp), avg = parseFloat(p.avg_buy);
-      return ltp && avg && ltp < avg && ltp >= 100;
+      if (!ltp || !avg || ltp >= avg || ltp < 100) return false;
+      if (q && !p.symbol.toLowerCase().includes(q)) return false;
+      return true;
     })
     .map(p => {
       const ltp  = parseFloat(p.ltp), avg = parseFloat(p.avg_buy);
@@ -728,6 +831,17 @@ function renderMTF(pg) {
                target5:  parseFloat((avg*1.05).toFixed(2)) };
     })
     .sort((a,b) => a.drop_pct - b.drop_pct);
+  // Apply column sort (overrides default drop% sort)
+  rows = applySortRows(rows, "mtf", {
+    symbol:   r => r.symbol||"",
+    sig_date: r => r.signal_date||"",
+    avg_buy:  r => parseFloat(r.avg_buy)||0,
+    ltp:      r => parseFloat(r.ltp)||0,
+    drop:     r => r.drop_pct,
+    qty:      r => r.qty,
+    inv:      r => r.totalInv,
+    target:   r => r.target5
+  });
 
   const totalQty = rows.reduce((s,r) => s+r.qty, 0);
   const totalInv = rows.reduce((s,r) => s+r.totalInv, 0);
@@ -746,9 +860,16 @@ function renderMTF(pg) {
 function buildMTFTable(rows, offset) {
   if (!rows.length) return '<div class="no-data">🎉 No eligible MTF positions right now</div>';
   return `<table><thead><tr>
-    <th>#</th><th>Symbol</th><th>Signal Date</th><th>Avg Buy ₹</th>
-    <th>LTP ₹</th><th>Drop%</th><th>Qty</th><th>Investment ₹</th>
-    <th>Target +5% ₹</th><th>Stop −25% ₹</th><th>Buys Done</th><th>Days Held</th>
+    <th style="cursor:default">#</th>
+    ${th("mtf","symbol","Symbol")}
+    ${th("mtf","sig_date","Signal Date")}
+    ${th("mtf","avg_buy","Avg Buy ₹")}
+    ${th("mtf","ltp","LTP ₹")}
+    ${th("mtf","drop","Drop%")}
+    ${th("mtf","qty","Qty")}
+    ${th("mtf","inv","Investment ₹")}
+    ${th("mtf","target","Target +5% ₹")}
+    <th>Stop −25% ₹</th><th>Buys Done</th><th>Days Held</th>
   </tr></thead><tbody>${rows.map((p,i) => `<tr>
     <td class="grey">${offset+i+1}</td>
     <td><b>${p.symbol}</b></td>
