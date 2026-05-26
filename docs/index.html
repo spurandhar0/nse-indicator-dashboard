@@ -488,7 +488,7 @@ function renderOverview() {
   document.getElementById("ov-wr").textContent     = (m.win_rate      || 0) + "%";
   document.getElementById("ov-avgg").textContent   = "+" + (m.avg_gain_pct || 0) + "%";
   document.getElementById("ov-avgl").textContent   = (m.avg_loss_pct  || 0) + "%";
-  const recent = [...DATA.signals].reverse().slice(0, 10);
+  const recent = DATA.signals.filter(s => s.signal_date === ovLastDay);
   document.getElementById("ov-recent-tbl").innerHTML = buildSignalTable(recent, 0);
 }
 
