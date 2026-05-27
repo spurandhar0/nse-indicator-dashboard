@@ -367,5 +367,14 @@
     "target": 1124.09,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "SONATSOFTW",
+    "avg_buy": 274.1,
+    "qty": 18,
+    "added_date": "2026-05-25",
+    "target": 301.51,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
