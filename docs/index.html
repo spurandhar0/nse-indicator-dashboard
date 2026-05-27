@@ -914,6 +914,24 @@ function saveMTFPrefs() {
 }
 
 // ── MTF OUTPUT ────────────────────────────────────────────────────────────────
+
+// ── ADD MTF ROW TO PORTFOLIO ─────────────────────────────────────────────────
+function addMTFToPortfolio(sym, avgBuy, signalDate, qty) {
+  // Pre-fill the portfolio add modal
+  const ms = document.getElementById('port-add-modal');
+  if (!ms) return;
+  const symIn  = ms.querySelector('#port-add-symbol');
+  const avgIn  = ms.querySelector('#port-add-avg');
+  const qtyIn  = ms.querySelector('#port-add-qty');
+  const dateIn = ms.querySelector('#port-add-date');
+  if (symIn)  symIn.value  = sym;
+  if (avgIn)  avgIn.value  = parseFloat(avgBuy).toFixed(2);
+  if (qtyIn)  qtyIn.value  = qty;
+  if (dateIn) dateIn.value = signalDate;
+  ms.style.display = 'flex';
+  showTab('portfolio');
+}
+
 function renderMTF(pg) {
   if (pg) pages.mtf = pg;
   const inv    = parseFloat(document.getElementById("mtf-inv-input").value) || 5000;
@@ -1001,7 +1019,7 @@ function buildMTFTable(rows, offset, tgtPct) {
     ${th("mtf","qty","Qty")}
     ${th("mtf","inv","Investment ₹")}
     ${th("mtf","target","Target +${tgtPct}% ₹")}
-    <th>Stop −25% ₹</th><th>Buys Done</th><th>Days Held</th>
+    <th>Stop −25% ₹</th><th>Buys Done</th><th>Days Held</th><th></th>
   </tr></thead><tbody>${rows.map((p,i) => `<tr>
     <td class="grey">${offset+i+1}</td>
     <td><b>${p.symbol}</b></td>
@@ -1015,6 +1033,7 @@ function buildMTFTable(rows, offset, tgtPct) {
     <td class="red">₹${fmt(r2(parseFloat(p.avg_buy)*0.75))}</td>
     <td class="blue">${p.buys_done}/4</td>
     <td>${p.market_days}</td>
+    <td><button onclick="addMTFToPortfolio('${p.symbol}','${p.avg_buy}','${p.signal_date}',${p.qty})" style="background:#1a7f37;color:#fff;border:none;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:12px;white-space:nowrap">+ Portfolio</button></td>
   </tr>`).join('')}</tbody></table>`;
 }
 
