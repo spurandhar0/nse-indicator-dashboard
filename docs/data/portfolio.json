@@ -214,5 +214,14 @@
     "target": 2473.57,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "IPCALAB",
+    "avg_buy": 1646.3,
+    "qty": 3,
+    "added_date": "2026-05-18",
+    "target": 1810.93,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
