@@ -250,5 +250,14 @@
     "target": 793.6,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "JYOTHYLAB",
+    "avg_buy": 214.9,
+    "qty": 24,
+    "added_date": "2026-05-18",
+    "target": 236.39,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
