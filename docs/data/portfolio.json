@@ -349,5 +349,14 @@
     "target": 330.99,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "POONAWALLA",
+    "avg_buy": 420.7,
+    "qty": 12,
+    "added_date": "2026-05-14",
+    "target": 462.77,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
