@@ -394,5 +394,14 @@
     "target": 1354.1,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "VINATIORGA",
+    "avg_buy": 1346.5,
+    "qty": 3,
+    "added_date": "2026-05-14",
+    "target": 1481.15,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
