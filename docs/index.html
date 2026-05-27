@@ -922,14 +922,15 @@ function addMTFToPortfolio(sym, avgBuy, signalDate, qty) {
   const avg = parseFloat(avgBuy) || 0;
   const q   = parseInt(qty) || 0;
   const dt  = signalDate || new Date().toISOString().split('T')[0];
-  if (!s || avg <= 0 || q <= 0) { toast('Invalid MTF data', 'warn'); return; }
+  const finalQty = q > 0 ? q : 1;  // If investment too low for 1 share, default to qty=1
+  if (!s || avg <= 0) { toast('Invalid MTF data', 'warn'); return; }
   const arr = getPortfolio();
   // Prevent duplicates
   if (arr.some(p => (p.symbol||'').toUpperCase() === s)) {
     toast(s + ' already in Portfolio', 'warn'); return;
   }
   const target = parseFloat((avg * 1.10).toFixed(2));
-  arr.push({ symbol: s, avg_buy: avg, qty: q, added_date: dt, target: target, current_ltp: 0, status: 'No' });
+  arr.push({ symbol: s, avg_buy: avg, qty: finalQty, added_date: dt, target: target, current_ltp: 0, status: 'No' });
   _portfolioModified = true;
   savePortfolio(arr);
   _pushPortfolioToGitHub(arr);
