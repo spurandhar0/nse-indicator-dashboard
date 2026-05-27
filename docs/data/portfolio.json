@@ -421,5 +421,14 @@
     "target": 511.23,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "EPL",
+    "avg_buy": 229.36,
+    "qty": 22,
+    "added_date": "2026-05-14",
+    "target": 252.3,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
