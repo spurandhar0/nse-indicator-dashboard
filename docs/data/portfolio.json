@@ -385,5 +385,14 @@
     "target": 332.18,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "TATACONSUM",
+    "avg_buy": 1231,
+    "qty": 4,
+    "added_date": "2026-05-18",
+    "target": 1354.1,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
