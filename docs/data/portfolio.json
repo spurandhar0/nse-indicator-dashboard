@@ -466,5 +466,14 @@
     "target": 352.99,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "OIL",
+    "avg_buy": 517.55,
+    "qty": 10,
+    "added_date": "2026-05-14",
+    "target": 569.3,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
