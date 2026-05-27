@@ -975,7 +975,7 @@ function renderMTF(pg) {
     .map(p => {
       const ltp  = parseFloat(p.ltp), avg = parseFloat(p.avg_buy);
       const drop = ((ltp - avg) / avg * 100);
-      const qty  = Math.floor(inv / ltp);
+      const qty  = Math.max(1, Math.floor(inv / ltp));
       return { ...p, drop_pct: parseFloat(drop.toFixed(2)), qty,
                totalInv: parseFloat((qty*ltp).toFixed(2)),
                targetPrice: parseFloat((avg*(1+tgtPct/100)).toFixed(2)) };
@@ -1108,7 +1108,7 @@ function exportCSV(type) {
       return ltp&&avg&&ltp<avg&&ltp>=100;
     }).map(p=>{
       const drop=((parseFloat(p.ltp)-parseFloat(p.avg_buy))/parseFloat(p.avg_buy)*100).toFixed(2);
-      const qty=Math.floor(inv/parseFloat(p.ltp));
+      const qty=Math.max(1,Math.floor(inv/parseFloat(p.ltp)));
       return {...p,drop_pct:drop,qty};
     });
     headers  = ["Symbol","Signal Date","Avg Buy","LTP","Drop%","Qty","Investment","Target+5%","Stop-25%","Buys","Days"];
