@@ -68,7 +68,7 @@
     "qty": 3,
     "added_date": "2026-05-18",
     "target": 1757.36,
-    "current_ltp": 0,
+    "current_ltp": 1558,
     "status": "No"
   },
   {
@@ -77,6 +77,15 @@
     "qty": 1,
     "added_date": "2026-05-18",
     "target": 5389.45,
+    "current_ltp": 4871.5,
+    "status": "No"
+  },
+  {
+    "symbol": "CANFINHOME",
+    "avg_buy": 849.55,
+    "qty": 5,
+    "added_date": "2026-05-15",
+    "target": 934.5,
     "current_ltp": 0,
     "status": "No"
   }
