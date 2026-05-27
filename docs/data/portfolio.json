@@ -34,5 +34,14 @@
     "target": 2063.6,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "AUROPHARMA",
+    "avg_buy": 1510.9,
+    "qty": 3,
+    "added_date": "2026-05-14",
+    "target": 1661.99,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
