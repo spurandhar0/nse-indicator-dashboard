@@ -86,7 +86,7 @@
     "qty": 5,
     "added_date": "2026-05-15",
     "target": 934.5,
-    "current_ltp": 0,
+    "current_ltp": 839.55,
     "status": "No"
   },
   {
@@ -95,7 +95,7 @@
     "qty": 6,
     "added_date": "2026-05-18",
     "target": 822.53,
-    "current_ltp": 0,
+    "current_ltp": 747.3,
     "status": "No"
   },
   {
@@ -104,7 +104,7 @@
     "qty": 3,
     "added_date": "2026-05-18",
     "target": 1428.68,
-    "current_ltp": 0,
+    "current_ltp": 1298.3,
     "status": "No"
   },
   {
@@ -113,7 +113,7 @@
     "qty": 17,
     "added_date": "2026-05-15",
     "target": 332.15,
-    "current_ltp": 0,
+    "current_ltp": 289.05,
     "status": "No"
   },
   {
@@ -122,6 +122,15 @@
     "qty": 2,
     "added_date": "2026-05-18",
     "target": 1923.35,
+    "current_ltp": 1727.1,
+    "status": "No"
+  },
+  {
+    "symbol": "BRITANNIA",
+    "avg_buy": 5380.5,
+    "qty": 1,
+    "added_date": "2026-05-18",
+    "target": 5918.55,
     "current_ltp": 0,
     "status": "No"
   }
