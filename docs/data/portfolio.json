@@ -43,5 +43,14 @@
     "target": 1661.99,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "BAJAJELEC",
+    "avg_buy": 356.8,
+    "qty": 14,
+    "added_date": "2026-05-18",
+    "target": 392.48,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
