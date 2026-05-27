@@ -118,6 +118,15 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
 ::-webkit-scrollbar-track{background:#eef1f5;border-radius:3px}
 ::-webkit-scrollbar-thumb{background:#b0bec5;border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:#78909c}
+
+/* ── PORTFOLIO ── */
+#tab-portfolio .tbl-wrap { max-height: 62vh; overflow-y: auto; overflow-x: auto; }
+#tab-portfolio table { width: 100%; border-collapse: collapse; }
+#tab-portfolio th, #tab-portfolio td { padding: 7px 10px; border-bottom: 1px solid #e5e7eb; font-size: 12px; white-space: nowrap; }
+#tab-portfolio thead th { background: #f1f5f9; font-weight: 700; font-size: 11px; color: #374151; position: sticky; top: 0; z-index: 2; }
+#tab-portfolio tbody tr:hover { background: #f8fafc; }
+.port-del { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 4px; }
+.port-del:hover { background: #fee2e2; }
 </style>
 </head>
 <body>
@@ -161,6 +170,7 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
   <div class="tab" onclick="showTab('fe')">⏱ Force Exit</div>
   <div class="tab" onclick="showTab('performance')">🏆 Performance</div>
   <div class="tab" onclick="showTab('mtf')">📦 MTF Output</div>
+  <div class="tab" onclick="showTab('portfolio')">📁 Portfolio</div>
 </div>
 
 <!-- ── OVERVIEW TAB ── -->
@@ -402,11 +412,60 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
   <div class="pager" id="mtf-pager"></div>
 </div>
 
+<!-- ── PORTFOLIO TAB ── -->
+<div id="tab-portfolio" class="content">
+  <div class="card" style="padding:14px 16px;">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+      <h3 style="margin:0;font-size:16px;font-weight:800;">📁 Portfolio</h3>
+      <span style="font-size:12px;color:#6b7a99;">Your holdings &mdash; synced via GitHub &middot; LTP from open positions &middot; 🏁 = target met</span>
+      <div style="margin-left:auto;display:flex;gap:6px;">
+        <button class="btn btn-csv" style="background:#16a34a;" onclick="showPortfolioAddModal()">+ Add</button>
+        <button class="btn btn-csv" style="background:#0891b2;" onclick="syncPortfolioFromGitHub().then(d=>{if(d){savePortfolio(d);_renderPortfolioNow();}})">&#8635; Sync</button>
+        <button class="btn btn-csv" style="background:#64748b;" onclick="showPATModal()">&#9881; Settings</button>
+      </div>
+    </div>
+    <!-- Stats Cards -->
+    <div id="port-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:10px;"></div>
+    <!-- Search + Filter row -->
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+      <input type="text" id="port-search" placeholder="&#128269; Search symbol&#8230;"
+             style="padding:5px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;min-width:160px;background:#fff;"
+             oninput="portSearchChange()">
+      <button id="port-f-all"    class="btn-filter active" onclick="portFilter('ALL',this)">All</button>
+      <button id="port-f-open"   class="btn-filter"        onclick="portFilter('Open',this)">Open (No Target)</button>
+      <button id="port-f-closed" class="btn-filter"        onclick="portFilter('Closed',this)">Closed (Target Hit)</button>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>#</th>
+          <th onclick="portSort('symbol')" style="cursor:pointer" id="pth-symbol">Symbol</th>
+          <th onclick="portSort('date')"   style="cursor:pointer" id="pth-date">Added Date</th>
+          <th onclick="portSort('avg')"    style="cursor:pointer" id="pth-avg">Avg Buy &#8377;</th>
+          <th onclick="portSort('qty')"    style="cursor:pointer" id="pth-qty">Qty</th>
+          <th onclick="portSort('inv')"    style="cursor:pointer" id="pth-inv">Investment &#8377;</th>
+          <th onclick="portSort('ltp')"    style="cursor:pointer" id="pth-ltp">Current LTP &#8377;</th>
+          <th onclick="portSort('drop')"   style="cursor:pointer" id="pth-drop">Drop%</th>
+          <th onclick="portSort('target')" style="cursor:pointer" id="pth-target">Target &#8377;</th>
+          <th onclick="portSort('status')" style="cursor:pointer" id="pth-status">Status</th>
+          <th>Action</th>
+        </tr></thead>
+        <tbody id="portfolio-body">
+          <tr><td colspan="11" class="empty">Click the tab to load&hellip;</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pager" id="portfolio-pager">
+      <span class="count-badge" id="portfolio-info"></span>
+    </div>
+  </div>
+</div>
+
 <script>
 let DATA = { signals: [], open: [], closed: [], fe: [], meta: {}, indices: {} };
 const BASE = "data/";
 const PAGE_SIZE = 25;
-const pages = { overview:1, signals:1, open:1, closed:1, fe:1, mtf:1 };
+const pages = { overview:1, signals:1, open:1, closed:1, fe:1, mtf:1, portfolio:1 };
 
 async function loadData() {
   try {
@@ -451,11 +510,12 @@ function renderAll() {
 }
 
 function showTab(name) {
-  const names = ["overview","signals","open","closed","fe","performance","mtf"];
+  const names = ["overview","signals","open","closed","fe","performance","mtf","portfolio"];
   document.querySelectorAll(".tab").forEach((t,i) => t.classList.toggle("active", names[i] === name));
   document.querySelectorAll(".content").forEach(c => c.classList.remove("active"));
   document.getElementById("tab-" + name).classList.add("active");
-  if (name === "mtf") renderMTF(1);
+  if (name === "mtf")       renderMTF(1);
+  if (name === "portfolio") renderPortfolio();
 }
 
 // ── INDICES BAR ────────────────────────────────────────────────────────────
@@ -983,12 +1043,13 @@ function renderPager({page, pages:total, total:rowCount, tab}) {
 
 function goPage(tab, pg) {
   pages[tab] = pg;
-  if      (tab==="overview") renderOverview();
-  else if (tab==="signals") renderSignals();
-  else if (tab==="open")    renderOpen();
-  else if (tab==="closed")  renderClosed();
-  else if (tab==="fe")      renderFE();
-  else if (tab==="mtf")     renderMTF();
+  if      (tab==="overview")   renderOverview();
+  else if (tab==="signals")    renderSignals();
+  else if (tab==="open")       renderOpen();
+  else if (tab==="closed")     renderClosed();
+  else if (tab==="fe")         renderFE();
+  else if (tab==="mtf")        renderMTF();
+  else if (tab==="portfolio")  _renderPortfolioNow();
 }
 
 // ── CSV EXPORT ────────────────────────────────────────────────────────────────
@@ -1046,6 +1107,324 @@ function fmtNum(v) {
 function r2(v) { return Math.round(v*100)/100; }
 
 loadData();
+
+// ─── PORTFOLIO ────────────────────────────────────────────────────────────────
+const _PORTREPO = 'spurandhar0/nse-indicator-dashboard';
+const _PORTPATH = 'docs/data/portfolio.json';
+let _portState  = { status: 'ALL', search: '', sort: 'symbol', asc: true, page: 1 };
+let _portfolioModified = false;
+
+// Simple toast notification
+function toast(msg, type) {
+  let el = document.getElementById('ind-toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'ind-toast';
+    el.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:99999;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.25);transition:opacity .3s;';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.background = type==='success'?'#16a34a':type==='warn'?'#d97706':'#1d4ed8';
+  el.style.opacity = '1';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.opacity = '0'; }, 3000);
+}
+
+function getPortfolio() {
+  try { return JSON.parse(localStorage.getItem('ind_portfolio') || '[]'); } catch(e) { return []; }
+}
+
+function savePortfolio(arr) {
+  localStorage.setItem('ind_portfolio', JSON.stringify(arr));
+}
+
+async function syncPortfolioFromGitHub() {
+  try {
+    const url = 'https://raw.githubusercontent.com/' + _PORTREPO + '/main/' + _PORTPATH + '?t=' + Date.now();
+    const r = await fetch(url);
+    if (r.ok) return await r.json();
+  } catch(e) { console.warn('Portfolio GitHub sync failed', e); }
+  return null;
+}
+
+async function _pushPortfolioToGitHub(arr) {
+  const pat = localStorage.getItem('ind_gh_pat');
+  if (!pat) { toast('Enter GitHub PAT in Settings (⚙) first', 'info'); return false; }
+  try {
+    const apiUrl = 'https://api.github.com/repos/' + _PORTREPO + '/contents/' + _PORTPATH;
+    let sha = null;
+    const infoRes = await fetch(apiUrl, { headers: { Authorization: 'token ' + pat } });
+    if (infoRes.ok) { const info = await infoRes.json(); sha = info.sha; }
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(arr, null, 2))));
+    const body = { message: 'Update portfolio.json via indicator dashboard', content: content };
+    if (sha) body.sha = sha;
+    const res = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: { Authorization: 'token ' + pat, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (res.ok) { toast('Portfolio saved to GitHub ✓', 'success'); return true; }
+    if (res.status === 401) { toast('GitHub save failed: 401 — Update PAT in ⚙ Settings', 'warn'); showPATModal(); return false; }
+    toast('GitHub save failed: ' + res.status, 'warn');
+    return false;
+  } catch(e) { toast('GitHub error: ' + e.message, 'warn'); return false; }
+}
+
+function renderPortfolio() {
+  document.getElementById('portfolio-body').innerHTML =
+    '<tr><td colspan="11" class="empty">Loading portfolio…</td></tr>';
+  const local = getPortfolio();
+  if (!local.length && !_portfolioModified) {
+    syncPortfolioFromGitHub().then(function(d){
+      if (d && d.length) { savePortfolio(d); }
+      _renderPortfolioNow();
+    }).catch(_renderPortfolioNow);
+    return;
+  }
+  _renderPortfolioNow();
+}
+
+function portFilter(val, btn) {
+  _portState.status = val;
+  _portState.page = 1;
+  document.querySelectorAll('[id^="port-f-"]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  _renderPortfolioNow();
+}
+
+function portSearchChange() {
+  _portState.search = (document.getElementById('port-search')||{}).value || '';
+  _portState.page = 1;
+  _renderPortfolioNow();
+}
+
+function portSort(col) {
+  if (_portState.sort === col) _portState.asc = !_portState.asc;
+  else { _portState.sort = col; _portState.asc = col === 'symbol' ? true : false; }
+  _portState.page = 1;
+  _renderPortfolioNow();
+}
+
+function _renderPortfolioNow() {
+  let arr = getPortfolio();
+
+  // Build LTP map from DATA.open (indicator data)
+  const ltpMap = {};
+  if (window.DATA && DATA.open) {
+    DATA.open.forEach(function(p) {
+      if (p.symbol) ltpMap[p.symbol.toUpperCase()] = parseFloat(p.ltp) || 0;
+    });
+  }
+
+  // Refresh LTPs from live data
+  arr.forEach(function(p) {
+    const sym = (p.symbol || '').toUpperCase();
+    const ltp = ltpMap[sym] || 0;
+    if (ltp) p.current_ltp = ltp;
+    if (p.avg_buy > 0 && p.current_ltp) {
+      const target = p.target || parseFloat((p.avg_buy * 1.10).toFixed(2));
+      p.status = p.current_ltp >= target ? 'Yes' : 'No';
+    }
+  });
+  savePortfolio(arr);
+
+  // ── Stats ────────────────────────────────────────────────────────────────
+  let totalInv = 0, gainCnt = 0, gainAmt = 0, lossCnt = 0, lossAmt = 0;
+  arr.forEach(function(p) {
+    const avg = p.avg_buy || 0;
+    const ltp = p.current_ltp || 0;
+    const qty = p.qty || 0;
+    const inv = qty * avg;
+    const pnl = qty * (ltp - avg);
+    totalInv += inv;
+    if (ltp > 0 && ltp >= avg) { gainCnt++; gainAmt += pnl; }
+    else if (ltp > 0)          { lossCnt++; lossAmt += pnl; }
+  });
+  const netPnl = gainAmt + lossAmt;
+  const gainPct = totalInv > 0 ? (gainAmt / totalInv * 100) : 0;
+  const lossPct = totalInv > 0 ? (lossAmt / totalInv * 100) : 0;
+  const netPct  = totalInv > 0 ? (netPnl  / totalInv * 100) : 0;
+
+  const statsEl = document.getElementById('port-stats');
+  if (statsEl) statsEl.innerHTML = [
+    ['Total Holdings',    arr.length,                                     '',                         '#1e40af'],
+    ['Total Investment',  '₹' + fmt(totalInv.toFixed(0)),                '',                         '#1e40af'],
+    ['Gainers',           gainCnt + ' · ₹' + fmt(gainAmt.toFixed(0)),    gainPct.toFixed(2) + '%',   '#059669'],
+    ['Losers',            lossCnt + ' · ₹' + fmt(Math.abs(lossAmt).toFixed(0)), lossPct.toFixed(2) + '%', '#dc2626'],
+    ['Net P&L',           (netPnl>=0?'+':'') + '₹' + fmt(netPnl.toFixed(0)), netPct.toFixed(2) + '%', netPnl>=0?'#059669':'#dc2626'],
+  ].map(function(c) {
+    return '<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:8px 12px;min-width:120px;">' +
+      '<div style="font-size:10px;color:#6b7a99;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">' + c[0] + '</div>' +
+      '<div style="font-size:15px;font-weight:800;color:' + c[3] + ';">' + c[1] + '</div>' +
+      (c[2] ? '<div style="font-size:11px;color:' + c[3] + ';">' + c[2] + '</div>' : '') +
+      '</div>';
+  }).join('');
+
+  // ── Filter + Search ──────────────────────────────────────────────────────
+  const statusF = _portState.status || 'ALL';
+  const searchQ = (_portState.search || '').toUpperCase();
+  if (statusF === 'Open')   arr = arr.filter(p => (p.status||'No') !== 'Yes');
+  if (statusF === 'Closed') arr = arr.filter(p => (p.status||'No') === 'Yes');
+  if (searchQ) arr = arr.filter(p => (p.symbol||'').toUpperCase().includes(searchQ));
+
+  // ── Sort ─────────────────────────────────────────────────────────────────
+  const sortCol = _portState.sort || 'symbol';
+  const asc     = _portState.asc !== false;
+  arr.sort(function(a, b) {
+    if (sortCol === 'symbol') return asc ? (a.symbol||'').localeCompare(b.symbol||'') : (b.symbol||'').localeCompare(a.symbol||'');
+    let va, vb;
+    if (sortCol === 'date')   { va = a.added_date||'';  vb = b.added_date||''; }
+    if (sortCol === 'avg')    { va = a.avg_buy||0;       vb = b.avg_buy||0; }
+    if (sortCol === 'qty')    { va = a.qty||0;           vb = b.qty||0; }
+    if (sortCol === 'inv')    { va = (a.qty||0)*(a.avg_buy||0); vb = (b.qty||0)*(b.avg_buy||0); }
+    if (sortCol === 'ltp')    { va = a.current_ltp||0;   vb = b.current_ltp||0; }
+    if (sortCol === 'drop')   { const aa=a.avg_buy||0,ba=b.avg_buy||0; va=aa>0?((a.current_ltp||0)-aa)/aa*100:0; vb=ba>0?((b.current_ltp||0)-ba)/ba*100:0; }
+    if (sortCol === 'target') { va = a.target||0;        vb = b.target||0; }
+    if (sortCol === 'status') { va = (a.status||'No')==='Yes'?1:0; vb = (b.status||'No')==='Yes'?1:0; }
+    va = va||0; vb = vb||0;
+    return asc ? (va>vb?1:-1) : (va<vb?1:-1);
+  });
+
+  // Update sort arrows in headers
+  const colNames = {symbol:'Symbol',date:'Added Date',avg:'Avg Buy ₹',qty:'Qty',inv:'Investment ₹',ltp:'Current LTP ₹',drop:'Drop%',target:'Target ₹',status:'Status'};
+  document.querySelectorAll('[id^="pth-"]').forEach(th => {
+    const col = th.id.replace('pth-','');
+    const base = colNames[col] || col;
+    th.innerHTML = col === sortCol ? base + (asc ? ' ▲' : ' ▼') : base;
+  });
+
+  // ── Render rows with pagination ──────────────────────────────────────────
+  const body = document.getElementById('portfolio-body');
+  const { paged, pager } = paginate(arr, _portState.page, 'portfolio');
+  _portState.page = pager.page;
+
+  const infoEl = document.getElementById('portfolio-info');
+  if (infoEl) infoEl.textContent = arr.length + ' holding' + (arr.length !== 1 ? 's' : '');
+  document.getElementById('portfolio-pager').innerHTML =
+    '<span class="count-badge" id="portfolio-info">' + arr.length + ' holding' + (arr.length!==1?'s':'') + '</span>' +
+    renderPager(pager, 'portfolio');
+
+  if (!arr.length) {
+    body.innerHTML = '<tr><td colspan="11" class="empty">No holdings' + (searchQ||statusF!=='ALL'?' matching filter':' — use + Add to add symbols') + '</td></tr>';
+    return;
+  }
+
+  body.innerHTML = paged.map(function(p, i) {
+    const idx    = arr.indexOf(p);
+    const avg    = parseFloat(p.avg_buy) || 0;
+    const ltp    = parseFloat(p.current_ltp) || 0;
+    const qty    = parseInt(p.qty) || 0;
+    const inv    = qty * avg;
+    const target = p.target || parseFloat((avg * 1.10).toFixed(2));
+    const dropPct = avg > 0 ? ((ltp - avg) / avg * 100) : 0;
+    const pnl    = qty * (ltp - avg);
+    const targetMet = ltp > 0 && ltp >= target;
+    const ltpColor  = ltp <= 0 ? '#6b7280' : ltp >= avg ? '#059669' : '#dc2626';
+    const dropColor = dropPct >= 0 ? '#059669' : '#dc2626';
+    const ltpDisp   = ltp > 0 ? '₹' + fmt(ltp.toFixed(2)) : '—';
+    const pnlDisp   = ltp > 0 ? (pnl>=0?'+':'') + '₹' + fmt(pnl.toFixed(0)) : '—';
+    const statusBadge = targetMet
+      ? '<span style="color:#059669;font-weight:700;">🏁 Target Hit</span>'
+      : '<span style="color:#6b7280;">Holding</span>';
+    return '<tr>' +
+      '<td>' + (pager.offset + i + 1) + '</td>' +
+      '<td style="font-weight:700;color:#1e40af;">' + (p.symbol||'—') + '</td>' +
+      '<td>' + (p.added_date||'—') + '</td>' +
+      '<td>₹' + fmt((avg||0).toFixed(2)) + '</td>' +
+      '<td>' + qty + '</td>' +
+      '<td>₹' + fmt(inv.toFixed(0)) + '</td>' +
+      '<td style="color:' + ltpColor + ';font-weight:600;">' + ltpDisp + '</td>' +
+      '<td style="color:' + dropColor + ';font-weight:600;">' + (avg>0?(dropPct>=0?'+':'')+dropPct.toFixed(2)+'%':'—') + '</td>' +
+      '<td>₹' + fmt(target.toFixed(2)) + '</td>' +
+      '<td>' + statusBadge + '</td>' +
+      '<td><button class="port-del" onclick="deletePortfolioItem(' + idx + ')" title="Delete">🗑</button></td>' +
+      '</tr>';
+  }).join('');
+}
+
+function deletePortfolioItem(idx) {
+  const arr = getPortfolio();
+  const sym = arr[idx] ? arr[idx].symbol : '?';
+  if (!confirm('Delete ' + sym + ' from Portfolio?')) return;
+  arr.splice(idx, 1);
+  _portfolioModified = true;
+  savePortfolio(arr);
+  _pushPortfolioToGitHub(arr);
+  _renderPortfolioNow();
+}
+
+function showPortfolioAddModal() {
+  document.getElementById('port-add-modal').classList.remove('hidden');
+  document.getElementById('port-sym').value  = '';
+  document.getElementById('port-avg').value  = '';
+  document.getElementById('port-qty').value  = '';
+  document.getElementById('port-date').value = new Date().toISOString().split('T')[0];
+}
+
+function portfolioManualAdd() {
+  const sym  = (document.getElementById('port-sym').value||'').toUpperCase().trim();
+  const avg  = parseFloat(document.getElementById('port-avg').value) || 0;
+  const qty  = parseInt(document.getElementById('port-qty').value)   || 0;
+  const date = document.getElementById('port-date').value || new Date().toISOString().split('T')[0];
+  if (!sym || avg <= 0 || qty <= 0) { toast('Fill Symbol, Avg Buy, and Qty', 'warn'); return; }
+  const arr = getPortfolio();
+  const target = parseFloat((avg * 1.10).toFixed(2));
+  arr.push({ symbol: sym, avg_buy: avg, qty: qty, added_date: date, target: target, current_ltp: 0, status: 'No' });
+  _portfolioModified = true;
+  savePortfolio(arr);
+  _pushPortfolioToGitHub(arr);
+  document.getElementById('port-add-modal').classList.add('hidden');
+  _renderPortfolioNow();
+  toast(sym + ' added to portfolio ✓', 'success');
+}
+
+function showPATModal() {
+  document.getElementById('pat-modal').classList.remove('hidden');
+  document.getElementById('pat-input').value = localStorage.getItem('ind_gh_pat') || '';
+}
+
+function savePAT() {
+  const pat = (document.getElementById('pat-input').value || '').trim();
+  if (pat) { localStorage.setItem('ind_gh_pat', pat); toast('PAT saved ✓', 'success'); }
+  document.getElementById('pat-modal').classList.add('hidden');
+}
+
 </script>
+
+<!-- ── PAT MODAL ── -->
+<div id="pat-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:14px;padding:28px;width:440px;max-width:95vw;box-shadow:0 8px 32px rgba(0,0,0,.28);">
+    <h3 style="margin-bottom:14px;color:#1e40af;">⚙ GitHub Settings</h3>
+    <p style="font-size:12px;color:#6b7280;margin-bottom:14px;">Enter your GitHub PAT with <code>repo</code> write access to enable portfolio sync to <code>nse-indicator-dashboard</code>.</p>
+    <input id="pat-input" type="password" placeholder="ghp_xxxxxxxxxxxx"
+           style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;margin-bottom:14px;font-family:monospace;">
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button onclick="document.getElementById('pat-modal').classList.add('hidden')"
+              style="padding:7px 16px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer;font-size:13px;">Cancel</button>
+      <button onclick="savePAT()"
+              style="padding:7px 16px;background:#1d4ed8;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">Save PAT</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADD PORTFOLIO MODAL ── -->
+<div id="port-add-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:14px;padding:28px;width:400px;max-width:95vw;box-shadow:0 8px 32px rgba(0,0,0,.28);">
+    <h3 style="margin-bottom:14px;color:#1e40af;">+ Add to Portfolio</h3>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+      <input id="port-sym"  type="text"   placeholder="Symbol (e.g. RELIANCE)" style="padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;text-transform:uppercase;">
+      <input id="port-avg"  type="number" placeholder="Avg Buy Price (₹)"      style="padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;" min="0" step="0.01">
+      <input id="port-qty"  type="number" placeholder="Quantity"                style="padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;" min="1">
+      <input id="port-date" type="date"   style="padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;">
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button onclick="document.getElementById('port-add-modal').classList.add('hidden')"
+              style="padding:7px 16px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer;font-size:13px;">Cancel</button>
+      <button onclick="portfolioManualAdd()"
+              style="padding:7px 16px;background:#16a34a;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">Add</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
