@@ -430,5 +430,23 @@
     "target": 252.3,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "ERIS",
+    "avg_buy": 1373.9,
+    "qty": 3,
+    "added_date": "2026-05-14",
+    "target": 1511.29,
+    "current_ltp": 0,
+    "status": "No"
+  },
+  {
+    "symbol": "KANSAINER",
+    "avg_buy": 221.97,
+    "qty": 22,
+    "added_date": "2026-05-14",
+    "target": 244.17,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
