@@ -115,5 +115,14 @@
     "target": 332.15,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "DEEPAKNTR",
+    "avg_buy": 1748.5,
+    "qty": 2,
+    "added_date": "2026-05-18",
+    "target": 1923.35,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
