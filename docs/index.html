@@ -127,7 +127,8 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
 #tab-portfolio tbody tr:hover { background: #f8fafc; }
 .port-del { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 4px; }
 .port-del:hover { background: #fee2e2; }
-</style>
+    .hidden { display: none !important; }
+  </style>
 </head>
 <body>
 
@@ -1418,7 +1419,7 @@ function savePAT() {
     <input id="pat-input" type="password" placeholder="ghp_xxxxxxxxxxxx"
            style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;margin-bottom:14px;font-family:monospace;">
     <div style="display:flex;gap:8px;justify-content:flex-end;">
-      <button onclick="document.getElementById('pat-modal').classList.add('hidden')"
+      <button onclick="const _cp=document.getElementById('pat-modal');_cp.classList.add('hidden');_cp.style.display='';"
               style="padding:7px 16px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer;font-size:13px;">Cancel</button>
       <button onclick="savePAT()"
               style="padding:7px 16px;background:#1d4ed8;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">Save PAT</button>
@@ -1437,7 +1438,7 @@ function savePAT() {
       <input id="port-date" type="date"   style="padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;">
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;">
-      <button onclick="document.getElementById('port-add-modal').classList.add('hidden')"
+      <button onclick="const _c=document.getElementById('port-add-modal');_c.classList.add('hidden');_c.style.display='';"
               style="padding:7px 16px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer;font-size:13px;">Cancel</button>
       <button onclick="portfolioManualAdd()"
               style="padding:7px 16px;background:#16a34a;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">Add</button>
