@@ -178,5 +178,14 @@
     "target": 3268.1,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "ETHOSLTD",
+    "avg_buy": 2428.2,
+    "qty": 2,
+    "added_date": "2026-05-25",
+    "target": 2671.02,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
