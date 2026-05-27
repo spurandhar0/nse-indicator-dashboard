@@ -169,5 +169,14 @@
     "target": 464.53,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "ESCORTS",
+    "avg_buy": 2971,
+    "qty": 1,
+    "added_date": "2026-05-18",
+    "target": 3268.1,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
