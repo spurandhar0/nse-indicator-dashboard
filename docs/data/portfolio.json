@@ -277,5 +277,14 @@
     "target": 600.11,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "LTM",
+    "avg_buy": 4074.6,
+    "qty": 1,
+    "added_date": "2026-05-18",
+    "target": 4482.06,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
