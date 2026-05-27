@@ -23,7 +23,7 @@
     "qty": 1,
     "added_date": "2026-05-18",
     "target": 3535.51,
-    "current_ltp": 0,
+    "current_ltp": 3097.1,
     "status": "No"
   },
   {
@@ -32,7 +32,7 @@
     "qty": 2,
     "added_date": "2026-05-18",
     "target": 2063.6,
-    "current_ltp": 0,
+    "current_ltp": 1874.1,
     "status": "No"
   },
   {
@@ -41,7 +41,7 @@
     "qty": 3,
     "added_date": "2026-05-14",
     "target": 1661.99,
-    "current_ltp": 0,
+    "current_ltp": 1461.2,
     "status": "No"
   },
   {
@@ -50,7 +50,7 @@
     "qty": 14,
     "added_date": "2026-05-18",
     "target": 392.48,
-    "current_ltp": 0,
+    "current_ltp": 335.65,
     "status": "No"
   },
   {
@@ -59,6 +59,15 @@
     "qty": 2,
     "added_date": "2026-05-15",
     "target": 2095.94,
+    "current_ltp": 1846.9,
+    "status": "No"
+  },
+  {
+    "symbol": "BHARTIHEXA",
+    "avg_buy": 1597.6,
+    "qty": 3,
+    "added_date": "2026-05-18",
+    "target": 1757.36,
     "current_ltp": 0,
     "status": "No"
   }
