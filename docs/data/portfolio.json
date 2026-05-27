@@ -331,5 +331,14 @@
     "target": 3683.24,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "MEDANTA",
+    "avg_buy": 1239.2,
+    "qty": 4,
+    "added_date": "2026-05-18",
+    "target": 1363.12,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
