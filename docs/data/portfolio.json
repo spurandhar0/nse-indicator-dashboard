@@ -133,5 +133,14 @@
     "target": 5918.55,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "CHALET",
+    "avg_buy": 789.85,
+    "qty": 6,
+    "added_date": "2026-05-18",
+    "target": 868.84,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
