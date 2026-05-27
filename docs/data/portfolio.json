@@ -160,5 +160,14 @@
     "target": 4775.54,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "EMAMILTD",
+    "avg_buy": 422.3,
+    "qty": 12,
+    "added_date": "2026-05-18",
+    "target": 464.53,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
