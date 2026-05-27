@@ -304,5 +304,14 @@
     "target": 396.39,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "MARUTI",
+    "avg_buy": 13221,
+    "qty": 1,
+    "added_date": "2026-05-15",
+    "target": 14543.1,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
