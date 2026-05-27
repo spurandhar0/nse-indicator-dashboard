@@ -88,5 +88,14 @@
     "target": 934.5,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "CLEAN",
+    "avg_buy": 747.75,
+    "qty": 6,
+    "added_date": "2026-05-18",
+    "target": 822.53,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
