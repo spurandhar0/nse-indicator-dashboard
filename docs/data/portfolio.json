@@ -268,5 +268,14 @@
     "target": 569.89,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "LICHSGFIN",
+    "avg_buy": 545.55,
+    "qty": 9,
+    "added_date": "2026-05-18",
+    "target": 600.11,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
