@@ -420,9 +420,9 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
       <h3 style="margin:0;font-size:16px;font-weight:800;">📁 Portfolio</h3>
       <span style="font-size:12px;color:#6b7a99;">Your holdings &mdash; synced via GitHub &middot; LTP from open positions &middot; 🏁 = target met</span>
       <div style="margin-left:auto;display:flex;gap:6px;">
-        <button class="btn btn-csv" style="background:#16a34a;" onclick="showPortfolioAddModal()">+ Add</button>
-        <button class="btn btn-csv" style="background:#0891b2;" onclick="syncPortfolioFromGitHub().then(d=>{if(d){savePortfolio(d);_renderPortfolioNow();}})">&#8635; Sync</button>
-        <button class="btn btn-csv" style="background:#64748b;" onclick="showPATModal()">&#9881; Settings</button>
+        <button class="btn btn-csv" style="background:#16a34a;color:#fff;" onclick="showPortfolioAddModal()">+ Add</button>
+        <button class="btn btn-csv" style="background:#0891b2;color:#fff;" onclick="syncPortfolioFromGitHub().then(d=>{if(d){savePortfolio(d);_renderPortfolioNow();}})">&#8635; Sync</button>
+        <button class="btn btn-csv" style="background:#64748b;color:#fff;" onclick="showPATModal()">&#9881; Settings</button>
       </div>
     </div>
     <!-- Stats Cards -->
@@ -1239,7 +1239,7 @@ function _renderPortfolioNow() {
 
   // Build LTP map from DATA.open (indicator data)
   const ltpMap = {};
-  if (window.DATA && DATA.open) {
+  if (DATA && DATA.open) {
     DATA.open.forEach(function(p) {
       if (p.symbol) ltpMap[p.symbol.toUpperCase()] = parseFloat(p.ltp) || 0;
     });
