@@ -286,5 +286,23 @@
     "target": 4482.06,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "LTTS",
+    "avg_buy": 3549.5,
+    "qty": 1,
+    "added_date": "2026-05-18",
+    "target": 3904.45,
+    "current_ltp": 0,
+    "status": "No"
+  },
+  {
+    "symbol": "MAHLOG",
+    "avg_buy": 360.35,
+    "qty": 14,
+    "added_date": "2026-05-18",
+    "target": 396.39,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
