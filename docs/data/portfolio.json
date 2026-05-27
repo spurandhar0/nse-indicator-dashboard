@@ -106,5 +106,14 @@
     "target": 1428.68,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "CROMPTON",
+    "avg_buy": 301.95,
+    "qty": 17,
+    "added_date": "2026-05-15",
+    "target": 332.15,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
