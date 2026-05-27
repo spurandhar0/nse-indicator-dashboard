@@ -920,10 +920,10 @@ function addMTFToPortfolio(sym, avgBuy, signalDate, qty) {
   // Pre-fill the portfolio add modal
   const ms = document.getElementById('port-add-modal');
   if (!ms) return;
-  const symIn  = ms.querySelector('#port-add-symbol');
-  const avgIn  = ms.querySelector('#port-add-avg');
-  const qtyIn  = ms.querySelector('#port-add-qty');
-  const dateIn = ms.querySelector('#port-add-date');
+  const symIn  = ms.querySelector('#port-sym');
+  const avgIn  = ms.querySelector('#port-avg');
+  const qtyIn  = ms.querySelector('#port-qty');
+  const dateIn = ms.querySelector('#port-date');
   if (symIn)  symIn.value  = sym;
   if (avgIn)  avgIn.value  = parseFloat(avgBuy).toFixed(2);
   if (qtyIn)  qtyIn.value  = qty;
@@ -1373,7 +1373,7 @@ function deletePortfolioItem(idx) {
 }
 
 function showPortfolioAddModal() {
-  document.getElementById('port-add-modal').classList.remove('hidden');
+  const _pam=document.getElementById('port-add-modal'); _pam.classList.remove('hidden'); _pam.style.display='flex';
   document.getElementById('port-sym').value  = '';
   document.getElementById('port-avg').value  = '';
   document.getElementById('port-qty').value  = '';
@@ -1392,26 +1392,26 @@ function portfolioManualAdd() {
   _portfolioModified = true;
   savePortfolio(arr);
   _pushPortfolioToGitHub(arr);
-  document.getElementById('port-add-modal').classList.add('hidden');
+  const _pamh=document.getElementById('port-add-modal'); _pamh.classList.add('hidden'); _pamh.style.display='';
   _renderPortfolioNow();
   toast(sym + ' added to portfolio ✓', 'success');
 }
 
 function showPATModal() {
-  document.getElementById('pat-modal').classList.remove('hidden');
+  const _ptm=document.getElementById('pat-modal'); _ptm.classList.remove('hidden'); _ptm.style.display='flex';
   document.getElementById('pat-input').value = localStorage.getItem('ind_gh_pat') || '';
 }
 
 function savePAT() {
   const pat = (document.getElementById('pat-input').value || '').trim();
   if (pat) { localStorage.setItem('ind_gh_pat', pat); toast('PAT saved ✓', 'success'); }
-  document.getElementById('pat-modal').classList.add('hidden');
+  const _ptmh=document.getElementById('pat-modal'); _ptmh.classList.add('hidden'); _ptmh.style.display='';
 }
 
 </script>
 
 <!-- ── PAT MODAL ── -->
-<div id="pat-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;">
+<div id="pat-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center;">
   <div style="background:#fff;border-radius:14px;padding:28px;width:440px;max-width:95vw;box-shadow:0 8px 32px rgba(0,0,0,.28);">
     <h3 style="margin-bottom:14px;color:#1e40af;">⚙ GitHub Settings</h3>
     <p style="font-size:12px;color:#6b7280;margin-bottom:14px;">Enter your GitHub PAT with <code>repo</code> write access to enable portfolio sync to <code>nse-indicator-dashboard</code>.</p>
@@ -1427,7 +1427,7 @@ function savePAT() {
 </div>
 
 <!-- ── ADD PORTFOLIO MODAL ── -->
-<div id="port-add-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;">
+<div id="port-add-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center;">
   <div style="background:#fff;border-radius:14px;padding:28px;width:400px;max-width:95vw;box-shadow:0 8px 32px rgba(0,0,0,.28);">
     <h3 style="margin-bottom:14px;color:#1e40af;">+ Add to Portfolio</h3>
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
