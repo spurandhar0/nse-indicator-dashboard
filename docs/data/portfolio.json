@@ -52,5 +52,14 @@
     "target": 392.48,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "BHARTIARTL",
+    "avg_buy": 1905.4,
+    "qty": 2,
+    "added_date": "2026-05-15",
+    "target": 2095.94,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
