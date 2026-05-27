@@ -70,5 +70,14 @@
     "target": 1757.36,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "BLUEDART",
+    "avg_buy": 4899.5,
+    "qty": 1,
+    "added_date": "2026-05-18",
+    "target": 5389.45,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
