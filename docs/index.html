@@ -918,20 +918,24 @@ function saveMTFPrefs() {
 
 // ── ADD MTF ROW TO PORTFOLIO ─────────────────────────────────────────────────
 function addMTFToPortfolio(sym, avgBuy, signalDate, qty) {
-  // Pre-fill the portfolio add modal
-  const ms = document.getElementById('port-add-modal');
-  if (!ms) return;
-  const symIn  = ms.querySelector('#port-sym');
-  const avgIn  = ms.querySelector('#port-avg');
-  const qtyIn  = ms.querySelector('#port-qty');
-  const dateIn = ms.querySelector('#port-date');
-  if (symIn)  symIn.value  = sym;
-  if (avgIn)  avgIn.value  = parseFloat(avgBuy).toFixed(2);
-  if (qtyIn)  qtyIn.value  = qty;
-  if (dateIn) dateIn.value = signalDate;
-  ms.classList.remove('hidden');
-  ms.style.display = 'flex';
-  showTab('portfolio');
+  const s = (sym||'').toUpperCase().trim();
+  const avg = parseFloat(avgBuy) || 0;
+  const q   = parseInt(qty) || 0;
+  const dt  = signalDate || new Date().toISOString().split('T')[0];
+  if (!s || avg <= 0 || q <= 0) { toast('Invalid MTF data', 'warn'); return; }
+  const arr = getPortfolio();
+  // Prevent duplicates
+  if (arr.some(p => (p.symbol||'').toUpperCase() === s)) {
+    toast(s + ' already in Portfolio', 'warn'); return;
+  }
+  const target = parseFloat((avg * 1.10).toFixed(2));
+  arr.push({ symbol: s, avg_buy: avg, qty: q, added_date: dt, target: target, current_ltp: 0, status: 'No' });
+  _portfolioModified = true;
+  savePortfolio(arr);
+  _pushPortfolioToGitHub(arr);
+  toast(s + ' added to Portfolio ✓', 'ok');
+  // Re-render MTF to hide the added symbol
+  renderMTF();
 }
 
 function renderMTF(pg) {
@@ -981,6 +985,10 @@ function renderMTF(pg) {
   if (filt === "lt5")   rows = rows.filter(r => Math.abs(r.drop_pct) < 5);
   else if (filt === "5to10") rows = rows.filter(r => Math.abs(r.drop_pct) >= 5 && Math.abs(r.drop_pct) <= 10);
   else if (filt === "gt10")  rows = rows.filter(r => Math.abs(r.drop_pct) > 10);
+
+  // Hide symbols already added to Portfolio
+  const _portSyms = new Set(getPortfolio().map(p => (p.symbol||'').toUpperCase()));
+  rows = rows.filter(r => !_portSyms.has((r.symbol||'').toUpperCase()));
 
   // Apply column sort (overrides default drop% sort)
   rows = applySortRows(rows, "mtf", {
