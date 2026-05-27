@@ -142,5 +142,14 @@
     "target": 868.84,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "DIVISLAB",
+    "avg_buy": 6835,
+    "qty": 1,
+    "added_date": "2026-05-18",
+    "target": 7518.5,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
