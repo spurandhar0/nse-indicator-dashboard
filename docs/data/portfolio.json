@@ -475,5 +475,14 @@
     "target": 569.3,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "RAMCOCEM",
+    "avg_buy": 891.85,
+    "qty": 5,
+    "added_date": "2026-05-18",
+    "target": 981.04,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
