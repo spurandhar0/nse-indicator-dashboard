@@ -340,5 +340,14 @@
     "target": 1363.12,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "ONGC",
+    "avg_buy": 300.9,
+    "qty": 17,
+    "added_date": "2026-05-14",
+    "target": 330.99,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
