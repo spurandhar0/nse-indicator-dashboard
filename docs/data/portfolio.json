@@ -223,5 +223,14 @@
     "target": 1810.93,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "ITC",
+    "avg_buy": 307.2,
+    "qty": 16,
+    "added_date": "2026-05-14",
+    "target": 337.92,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
