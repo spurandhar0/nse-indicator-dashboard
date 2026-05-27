@@ -97,5 +97,14 @@
     "target": 822.53,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "CREDITACC",
+    "avg_buy": 1298.8,
+    "qty": 3,
+    "added_date": "2026-05-18",
+    "target": 1428.68,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
