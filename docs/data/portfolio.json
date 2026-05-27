@@ -205,5 +205,14 @@
     "target": 259.52,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "HINDUNILVR",
+    "avg_buy": 2248.7,
+    "qty": 2,
+    "added_date": "2026-05-14",
+    "target": 2473.57,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
