@@ -25,5 +25,14 @@
     "target": 3535.51,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "APLAPOLLO",
+    "avg_buy": 1876,
+    "qty": 2,
+    "added_date": "2026-05-18",
+    "target": 2063.6,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
