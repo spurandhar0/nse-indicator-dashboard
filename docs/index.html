@@ -929,6 +929,7 @@ function addMTFToPortfolio(sym, avgBuy, signalDate, qty) {
   if (avgIn)  avgIn.value  = parseFloat(avgBuy).toFixed(2);
   if (qtyIn)  qtyIn.value  = qty;
   if (dateIn) dateIn.value = signalDate;
+  ms.classList.remove('hidden');
   ms.style.display = 'flex';
   showTab('portfolio');
 }
