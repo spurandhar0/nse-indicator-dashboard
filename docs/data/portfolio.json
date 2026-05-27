@@ -241,5 +241,14 @@
     "target": 710.38,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "JUBLINGREA",
+    "avg_buy": 721.45,
+    "qty": 7,
+    "added_date": "2026-05-18",
+    "target": 793.6,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
