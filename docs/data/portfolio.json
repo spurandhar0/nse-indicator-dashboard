@@ -547,5 +547,14 @@
     "target": 823.51,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "NAZARA",
+    "avg_buy": 298.95,
+    "qty": 17,
+    "added_date": "2026-05-18",
+    "target": 328.85,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
