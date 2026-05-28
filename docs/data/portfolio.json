@@ -502,5 +502,14 @@
     "target": 517.33,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "ICICIPRULI",
+    "avg_buy": 541.7,
+    "qty": 9,
+    "added_date": "2026-05-14",
+    "target": 595.87,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
