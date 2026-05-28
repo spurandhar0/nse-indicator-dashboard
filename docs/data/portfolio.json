@@ -511,5 +511,14 @@
     "target": 595.87,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "IEX",
+    "avg_buy": 128.44,
+    "qty": 39,
+    "added_date": "2026-05-14",
+    "target": 141.28,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
