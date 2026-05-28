@@ -419,7 +419,7 @@
     "qty": 11,
     "added_date": "2026-05-14",
     "target": 511.23,
-    "current_ltp": 0,
+    "current_ltp": 447.6,
     "status": "No"
   },
   {
@@ -428,7 +428,7 @@
     "qty": 22,
     "added_date": "2026-05-14",
     "target": 252.3,
-    "current_ltp": 0,
+    "current_ltp": 219.1,
     "status": "No"
   },
   {
@@ -437,7 +437,7 @@
     "qty": 3,
     "added_date": "2026-05-14",
     "target": 1511.29,
-    "current_ltp": 0,
+    "current_ltp": 1361.4,
     "status": "No"
   },
   {
@@ -446,7 +446,7 @@
     "qty": 22,
     "added_date": "2026-05-14",
     "target": 244.17,
-    "current_ltp": 0,
+    "current_ltp": 217.76,
     "status": "No"
   },
   {
@@ -455,7 +455,7 @@
     "qty": 3,
     "added_date": "2026-05-18",
     "target": 1810.93,
-    "current_ltp": 0,
+    "current_ltp": 1604,
     "status": "No"
   },
   {
@@ -464,7 +464,7 @@
     "qty": 16,
     "added_date": "2026-05-14",
     "target": 352.99,
-    "current_ltp": 0,
+    "current_ltp": 305.1,
     "status": "No"
   },
   {
@@ -473,7 +473,7 @@
     "qty": 10,
     "added_date": "2026-05-14",
     "target": 569.3,
-    "current_ltp": 0,
+    "current_ltp": 492.1,
     "status": "No"
   },
   {
@@ -482,6 +482,15 @@
     "qty": 5,
     "added_date": "2026-05-18",
     "target": 981.04,
+    "current_ltp": 891.6,
+    "status": "No"
+  },
+  {
+    "symbol": "BRIGADE",
+    "avg_buy": 663.45,
+    "qty": 7,
+    "added_date": "2026-05-18",
+    "target": 729.8,
     "current_ltp": 0,
     "status": "No"
   }
