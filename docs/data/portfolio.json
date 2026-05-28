@@ -556,5 +556,14 @@
     "target": 328.85,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "PCBL",
+    "avg_buy": 293.2,
+    "qty": 17,
+    "added_date": "2026-05-22",
+    "target": 322.52,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
