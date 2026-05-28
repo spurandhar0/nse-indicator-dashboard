@@ -520,5 +520,14 @@
     "target": 141.28,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "JINDALSTEL",
+    "avg_buy": 1252.8,
+    "qty": 4,
+    "added_date": "2026-05-14",
+    "target": 1378.08,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
