@@ -1102,7 +1102,8 @@ function exportCSV(type) {
     rows     = DATA.fe.map(p=>[p.symbol,p.signal_date,p.exit_date,p.avg_buy,p.exit_price,p.pnl,p.gain_pct,p.buys_done,p.market_days]);
     filename = "force_exit.csv";
   } else if (type==="mtf") {
-    const inv = parseFloat(document.getElementById("mtf-inv-input").value) || 5000;
+    const inv    = parseFloat(document.getElementById("mtf-inv-input").value) || 5000;
+    const tgtPct = parseFloat(document.getElementById("mtf-tgt-input").value) || 10;
     const mtfRows = DATA.open.filter(p => {
       const ltp=parseFloat(p.ltp),avg=parseFloat(p.avg_buy);
       return ltp&&avg&&ltp<avg&&ltp>=100;
@@ -1111,8 +1112,8 @@ function exportCSV(type) {
       const qty=Math.max(1,Math.floor(inv/parseFloat(p.ltp)));
       return {...p,drop_pct:drop,qty};
     });
-    headers  = ["Symbol","Signal Date","Avg Buy","LTP","Drop%","Qty","Investment","Target+5%","Stop-25%","Buys","Days"];
-    rows     = mtfRows.map(p=>[p.symbol,p.signal_date,p.avg_buy,p.ltp,p.drop_pct,p.qty,r2(p.qty*parseFloat(p.ltp)),r2(parseFloat(p.avg_buy)*1.05),r2(parseFloat(p.avg_buy)*0.75),p.buys_done,p.market_days]);
+    headers  = ["Symbol","Signal Date","Avg Buy","LTP","Drop%","Qty","Investment",`Target+${tgtPct}%`,"Stop-25%","Buys","Days"];
+    rows     = mtfRows.map(p=>[p.symbol,p.signal_date,p.avg_buy,p.ltp,p.drop_pct,p.qty,r2(p.qty*parseFloat(p.ltp)),r2(parseFloat(p.avg_buy)*(1+tgtPct/100)),r2(parseFloat(p.avg_buy)*0.75),p.buys_done,p.market_days]);
     filename = "mtf_output.csv";
   }
   const csv = [headers,...rows].map(r=>r.join(",")).join("\n");
