@@ -493,5 +493,14 @@
     "target": 729.8,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "DELHIVERY",
+    "avg_buy": 470.3,
+    "qty": 10,
+    "added_date": "2026-05-14",
+    "target": 517.33,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
