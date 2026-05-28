@@ -565,5 +565,14 @@
     "target": 322.52,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "SUNPHARMA",
+    "avg_buy": 1863.2,
+    "qty": 2,
+    "added_date": "2026-05-14",
+    "target": 2049.52,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
