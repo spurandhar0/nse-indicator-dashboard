@@ -538,5 +538,14 @@
     "target": 6073.65,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "JSL",
+    "avg_buy": 748.65,
+    "qty": 6,
+    "added_date": "2026-05-18",
+    "target": 823.51,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
