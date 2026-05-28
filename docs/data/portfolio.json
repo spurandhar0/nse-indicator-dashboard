@@ -529,5 +529,14 @@
     "target": 1378.08,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "JKCEMENT",
+    "avg_buy": 5521.5,
+    "qty": 1,
+    "added_date": "2026-05-14",
+    "target": 6073.65,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
