@@ -628,5 +628,14 @@
     "target": 471.74,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "BIRLACORPN",
+    "avg_buy": 1011.4,
+    "qty": 4,
+    "added_date": "2026-05-18",
+    "target": 1112.54,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
