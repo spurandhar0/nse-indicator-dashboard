@@ -727,5 +727,23 @@
     "target": 673.8,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "HINDZINC",
+    "avg_buy": 669.25,
+    "qty": 7,
+    "added_date": "2026-05-14",
+    "target": 736.18,
+    "current_ltp": 0,
+    "status": "No"
+  },
+  {
+    "symbol": "M&M",
+    "avg_buy": 3173.9,
+    "qty": 1,
+    "added_date": "2026-05-14",
+    "target": 3491.29,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
