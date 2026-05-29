@@ -610,5 +610,14 @@
     "target": 373.62,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "ASTERDM",
+    "avg_buy": 755.25,
+    "qty": 6,
+    "added_date": "2026-05-18",
+    "target": 830.78,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
