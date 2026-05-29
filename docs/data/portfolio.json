@@ -808,5 +808,14 @@
     "target": 192.59,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "RADICO",
+    "avg_buy": 3471.4,
+    "qty": 1,
+    "added_date": "2026-05-18",
+    "target": 3818.54,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
