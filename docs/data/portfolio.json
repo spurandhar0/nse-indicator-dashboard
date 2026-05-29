@@ -817,5 +817,14 @@
     "target": 3818.54,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "SBILIFE",
+    "avg_buy": 1866.7,
+    "qty": 2,
+    "added_date": "2026-05-14",
+    "target": 2053.37,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
