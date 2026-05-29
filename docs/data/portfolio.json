@@ -637,5 +637,14 @@
     "target": 1112.54,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "CARBORUNIV",
+    "avg_buy": 1098.25,
+    "qty": 4,
+    "added_date": "2026-05-18",
+    "target": 1208.08,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
