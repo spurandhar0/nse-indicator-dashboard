@@ -763,5 +763,14 @@
     "target": 517.66,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "NAM-INDIA",
+    "avg_buy": 1092.3,
+    "qty": 4,
+    "added_date": "2026-05-14",
+    "target": 1201.53,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
