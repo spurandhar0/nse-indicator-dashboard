@@ -601,5 +601,14 @@
     "target": 8596.5,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "ANGELONE",
+    "avg_buy": 339.65,
+    "qty": 14,
+    "added_date": "2026-05-21",
+    "target": 373.62,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
