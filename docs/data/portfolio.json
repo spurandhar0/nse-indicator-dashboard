@@ -826,5 +826,14 @@
     "target": 2053.37,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "TATASTEEL",
+    "avg_buy": 221.13,
+    "qty": 23,
+    "added_date": "2026-05-14",
+    "target": 243.24,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
