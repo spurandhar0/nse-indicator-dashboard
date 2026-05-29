@@ -673,5 +673,14 @@
     "target": 201.91,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "DEVYANI",
+    "avg_buy": 118.68,
+    "qty": 42,
+    "added_date": "2026-05-19",
+    "target": 130.55,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
