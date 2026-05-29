@@ -691,5 +691,14 @@
     "target": 2511.08,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "FLUOROCHEM",
+    "avg_buy": 3694.5,
+    "qty": 1,
+    "added_date": "2026-05-18",
+    "target": 4063.95,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
