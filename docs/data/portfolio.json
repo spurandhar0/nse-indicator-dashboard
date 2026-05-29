@@ -754,5 +754,14 @@
     "target": 918.5,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "MMFL",
+    "avg_buy": 470.6,
+    "qty": 10,
+    "added_date": "2026-05-26",
+    "target": 517.66,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
