@@ -718,5 +718,14 @@
     "target": 846.5,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "HDFCLIFE",
+    "avg_buy": 612.55,
+    "qty": 8,
+    "added_date": "2026-05-14",
+    "target": 673.8,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
