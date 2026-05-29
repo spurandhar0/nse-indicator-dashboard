@@ -682,5 +682,14 @@
     "target": 130.55,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "DOMS",
+    "avg_buy": 2282.8,
+    "qty": 2,
+    "added_date": "2026-05-18",
+    "target": 2511.08,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
