@@ -772,5 +772,14 @@
     "target": 1201.53,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "NESTLEIND",
+    "avg_buy": 1459.6,
+    "qty": 3,
+    "added_date": "2026-05-14",
+    "target": 1605.56,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
