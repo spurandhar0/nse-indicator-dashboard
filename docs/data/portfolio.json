@@ -592,5 +592,14 @@
     "target": 1882.1,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "AMBER",
+    "avg_buy": 7815,
+    "qty": 1,
+    "added_date": "2026-05-15",
+    "target": 8596.5,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
