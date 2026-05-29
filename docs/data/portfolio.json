@@ -745,5 +745,14 @@
     "target": 3491.29,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "MARICO",
+    "avg_buy": 835,
+    "qty": 5,
+    "added_date": "2026-05-14",
+    "target": 918.5,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
