@@ -583,5 +583,14 @@
     "target": 526.02,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "ALKYLAMINE",
+    "avg_buy": 1711,
+    "qty": 2,
+    "added_date": "2026-05-18",
+    "target": 1882.1,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
