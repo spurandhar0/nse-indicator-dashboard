@@ -664,5 +664,14 @@
     "target": 2361.26,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "DCBBANK",
+    "avg_buy": 183.55,
+    "qty": 27,
+    "added_date": "2026-05-15",
+    "target": 201.91,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
