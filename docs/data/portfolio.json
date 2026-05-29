@@ -709,5 +709,14 @@
     "target": 1058.37,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "HDFCBANK",
+    "avg_buy": 769.55,
+    "qty": 6,
+    "added_date": "2026-05-14",
+    "target": 846.5,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
