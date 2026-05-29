@@ -781,5 +781,14 @@
     "target": 1605.56,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "PIDILITIND",
+    "avg_buy": 1483.8,
+    "qty": 3,
+    "added_date": "2026-05-14",
+    "target": 1632.18,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
