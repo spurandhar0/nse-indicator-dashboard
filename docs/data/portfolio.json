@@ -835,5 +835,14 @@
     "target": 243.24,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "ULTRACEMCO",
+    "avg_buy": 11692,
+    "qty": 1,
+    "added_date": "2026-05-14",
+    "target": 12861.2,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
