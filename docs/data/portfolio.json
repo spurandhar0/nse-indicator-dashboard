@@ -619,5 +619,14 @@
     "target": 830.78,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "BEL",
+    "avg_buy": 428.85,
+    "qty": 11,
+    "added_date": "2026-05-14",
+    "target": 471.74,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
