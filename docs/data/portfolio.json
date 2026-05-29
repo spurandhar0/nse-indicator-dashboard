@@ -655,5 +655,14 @@
     "target": 1580.37,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "COLPAL",
+    "avg_buy": 2146.6,
+    "qty": 2,
+    "added_date": "2026-05-14",
+    "target": 2361.26,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
