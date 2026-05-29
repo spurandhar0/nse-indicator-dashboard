@@ -799,5 +799,14 @@
     "target": 3214.26,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "PPLPHARMA",
+    "avg_buy": 175.08,
+    "qty": 28,
+    "added_date": "2026-05-18",
+    "target": 192.59,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
