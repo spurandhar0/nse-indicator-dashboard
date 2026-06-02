@@ -871,5 +871,14 @@
     "target": 401.17,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "SBIN",
+    "avg_buy": 979.9,
+    "qty": 5,
+    "added_date": "2026-05-14",
+    "target": 1077.89,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
