@@ -853,5 +853,14 @@
     "target": 2241.69,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "PAYTM",
+    "avg_buy": 1144.6,
+    "qty": 4,
+    "added_date": "2026-05-14",
+    "target": 1259.06,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
