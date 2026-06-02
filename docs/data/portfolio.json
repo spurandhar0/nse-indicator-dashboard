@@ -880,5 +880,14 @@
     "target": 1077.89,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "TITAN",
+    "avg_buy": 4169.7,
+    "qty": 1,
+    "added_date": "2026-05-18",
+    "target": 4586.67,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
