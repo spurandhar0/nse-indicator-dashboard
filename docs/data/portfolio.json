@@ -862,5 +862,14 @@
     "target": 1259.06,
     "current_ltp": 0,
     "status": "No"
+  },
+  {
+    "symbol": "PRAJIND",
+    "avg_buy": 364.7,
+    "qty": 14,
+    "added_date": "2026-05-18",
+    "target": 401.17,
+    "current_ltp": 0,
+    "status": "No"
   }
 ]
