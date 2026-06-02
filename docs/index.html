@@ -1082,7 +1082,7 @@ function goPage(tab, pg) {
   else if (tab==="closed")     renderClosed();
   else if (tab==="fe")         renderFE();
   else if (tab==="mtf")        renderMTF();
-  else if (tab==="portfolio")  _renderPortfolioNow();
+  else if (tab==="portfolio")  { _portState.page = pg; _renderPortfolioNow(); }
 }
 
 // ── CSV EXPORT ────────────────────────────────────────────────────────────────
