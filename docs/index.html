@@ -101,6 +101,10 @@ td{padding:7px 10px;white-space:nowrap;color:#1a2332}
 
 /* ── PAGINATION ── */
 .pager{display:flex;align-items:center;gap:5px;margin-top:10px;flex-wrap:wrap;padding:4px 0}
+.pager-nav{padding:4px 13px;border:1.5px solid #ccd5de;border-radius:20px;background:#fff;color:#1a2332;cursor:pointer;font-size:13px;font-weight:600;transition:background .15s}
+.pager-nav:hover:not([disabled]){background:#e8f0fe;border-color:#3b82f6}
+.pager-nav[disabled]{opacity:.4;cursor:default}
+.pager-size{padding:4px 8px;border:1.5px solid #ccd5de;border-radius:6px;background:#fff;color:#1a2332;font-size:13px;cursor:pointer}
 .pager button{padding:4px 10px;border:1px solid #ccd5de;border-radius:4px;background:#fff;color:#1a2332;cursor:pointer;font-size:12px;min-width:32px}
 .pager button:hover{background:#e3f2fd;border-color:#90caf9;color:#1a6fc4}
 .pager button.active{background:#0d1b2a;color:#fff;border-color:#0d1b2a}
@@ -484,6 +488,8 @@ let DATA = { signals: [], open: [], closed: [], fe: [], meta: {}, indices: {} };
 const BASE = "data/";
 const PAGE_SIZE = 25;
 const pages = { overview:1, signals:1, open:1, closed:1, fe:1, mtf:1, portfolio:1 };
+let _portPageSize = 25;
+let _mtfPageSize  = 25;
 
 async function loadData() {
   try {
@@ -1029,9 +1035,9 @@ function renderMTF(pg) {
   document.getElementById("mtf-total-inv").textContent = "₹" + fmt(totalInv);
   document.getElementById("mtf-count").textContent     = rows.length + " eligible";
 
-  const { paged, pager } = paginate(rows, pages.mtf, "mtf");
+  const { paged, pager } = paginateCustom(rows, pages.mtf, _mtfPageSize);
   document.getElementById("mtf-tbl").innerHTML   = buildMTFTable(paged, pager.offset, tgtPct);
-  document.getElementById("mtf-pager").innerHTML = renderPager(pager, "mtf");
+  document.getElementById("mtf-pager").innerHTML = renderPagerSimple(pager, "mtf", "setMTFPageSize");
 }
 
 function buildMTFTable(rows, offset, tgtPct) {
@@ -1087,6 +1093,31 @@ function renderPager({page, pages:total, total:rowCount, tab}) {
   btns += `<span class="pager-info">${rowCount} rows | Page ${page}/${total} | Showing ${from}–${to}</span>`;
   return btns;
 }
+
+function paginateCustom(rows, page, size) {
+  const total  = rows.length;
+  const ps     = (size === 0 || !size) ? Math.max(total,1) : size;
+  const totalP = Math.max(1, Math.ceil(total / ps));
+  const pg     = Math.min(Math.max(1, page), totalP);
+  const offset = (pg-1) * ps;
+  return { paged: rows.slice(offset, offset+ps), pager: {page:pg, pages:totalP, total, offset, tab:'', ps} };
+}
+
+function renderPagerSimple(pager, tab, sizeFn) {
+  const {page, pages:total, total:rowCount} = pager;
+  const ps   = pager.ps || 25;
+  const from = rowCount ? (page-1)*ps+1 : 0;
+  const to   = Math.min(page*ps, rowCount);
+  const opts = [10,25,50,100,0].map(v =>
+    '<option value="' + v + '"' + (ps === (v===0?rowCount:v) ? ' selected' : '') + '>' + (v===0?'All':v) + '</option>').join('');
+  return '<button class="pager-nav"' + (page<=1?' disabled':'') + ' onclick="goPage(\'' + tab + '\',' + (page-1) + ')">&#8249; Prev</button>' +
+    '<button class="pager-nav"' + (page>=total?' disabled':'') + ' onclick="goPage(\'' + tab + '\',' + (page+1) + ')">Next &#8250;</button>' +
+    '<select class="pager-size" onchange="' + sizeFn + '(+this.value)">' + opts + '</select>' +
+    '<span class="pager-info">' + rowCount + ' rows' + (rowCount ? ' | ' + from + '–' + to : '') + '</span>';
+}
+
+function setPortPageSize(sz) { _portPageSize = sz || 9999; pages.portfolio=1; _portState.page=1; _renderPortfolioNow(); }
+function setMTFPageSize(sz)  { _mtfPageSize  = sz || 9999; pages.mtf=1; renderMTF(1); }
 
 function goPage(tab, pg) {
   pages[tab] = pg;
@@ -1343,14 +1374,14 @@ function _renderPortfolioNow() {
 
   // ── Render rows with pagination ──────────────────────────────────────────
   const body = document.getElementById('portfolio-body');
-  const { paged, pager } = paginate(arr, _portState.page, 'portfolio');
+  const { paged, pager } = paginateCustom(arr, _portState.page, _portPageSize);
   _portState.page = pager.page;
 
   const infoEl = document.getElementById('portfolio-info');
   if (infoEl) infoEl.textContent = arr.length + ' holding' + (arr.length !== 1 ? 's' : '');
   document.getElementById('portfolio-pager').innerHTML =
     '<span class="count-badge" id="portfolio-info">' + arr.length + ' holding' + (arr.length!==1?'s':'') + '</span>' +
-    renderPager(pager, 'portfolio');
+    renderPagerSimple(pager, 'portfolio', 'setPortPageSize');
 
   if (!arr.length) {
     body.innerHTML = '<tr><td colspan="11" class="empty">No holdings' + (searchQ||statusF!=='ALL'?' matching filter':' — use + Add to add symbols') + '</td></tr>';
