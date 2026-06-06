@@ -486,7 +486,7 @@ function foTag(sym){ return _FO_SYMS.has((sym||'').toUpperCase()) ? '<span class
 
 let DATA = { signals: [], open: [], closed: [], fe: [], meta: {}, indices: {} };
 const BASE = "data/";
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 50;
 const pages = { overview:1, signals:1, open:1, closed:1, fe:1, mtf:1, portfolio:1 };
 let _portPageSize = 25;
 let _mtfPageSize  = 25;
@@ -1017,8 +1017,9 @@ function renderMTF(pg) {
   // Apply column sort (overrides default drop% sort)
   rows = applySortRows(rows, "mtf", {
     symbol:   r => r.symbol||"",
-    sig_date: r => r.signal_date||"",
-    avg_buy:  r => parseFloat(r.avg_buy)||0,
+    sig_date:  r => r.signal_date||"",
+    sig_price: r => parseFloat(r.buy1_price||r.avg_buy)||0,
+    avg_buy:   r => parseFloat(r.avg_buy)||0,
     ltp:      r => parseFloat(r.ltp)||0,
     drop:     r => r.drop_pct,
     qty:      r => r.qty,
@@ -1047,6 +1048,7 @@ function buildMTFTable(rows, offset, tgtPct) {
     <th style="cursor:default">#</th>
     ${th("mtf","symbol","Symbol")}
     ${th("mtf","sig_date","Signal Date")}
+    ${th("mtf","sig_price","Signal Price ₹")}
     ${th("mtf","avg_buy","Avg Buy ₹")}
     ${th("mtf","ltp","LTP ₹")}
     ${th("mtf","drop","Drop%")}
@@ -1058,6 +1060,7 @@ function buildMTFTable(rows, offset, tgtPct) {
     <td class="grey">${offset+i+1}</td>
     <td><b>${p.symbol}</b>${foTag(p.symbol)}</td>
     <td>${p.signal_date}</td>
+    <td>₹${fmt(p.buy1_price||p.avg_buy)}</td>
     <td>₹${fmt(p.avg_buy)}</td>
     <td>₹${fmt(p.ltp)}</td>
     <td class="red"><b>${p.drop_pct}%</b></td>
@@ -1416,15 +1419,16 @@ function _renderPortfolioNow() {
       '<td style="color:' + dropColor + ';font-weight:600;">' + (avg>0?(dropPct>=0?'+':'')+dropPct.toFixed(2)+'%':'—') + '</td>' +
       '<td style="color:#059669;font-weight:600;">₹' + fmt(target.toFixed(2)) + '</td>' +
       '<td>' + statusBadge + '</td>' +
-      '<td><button class="port-del-btn" onclick="deletePortfolioItem(' + idx + ')" title="Delete">&#128465;</button></td>' +
+      '<td><button class="port-del-btn" onclick="deletePortfolioItem(' + p.symbol + ')" title="Delete">&#128465;</button></td>' +
       '</tr>';
   }).join('');
 }
 
-function deletePortfolioItem(idx) {
+function deletePortfolioItem(sym) {
   const arr = getPortfolio();
-  const sym = arr[idx] ? arr[idx].symbol : '?';
   if (!confirm('Delete ' + sym + ' from Portfolio?')) return;
+  const idx = arr.findIndex(function(p) { return p.symbol === sym; });
+  if (idx < 0) { alert(sym + ' not found in portfolio'); return; }
   arr.splice(idx, 1);
   _portfolioModified = true;
   savePortfolio(arr);
