@@ -896,6 +896,15 @@
     "qty": 13,
     "added_date": "2026-05-14",
     "target": 435.93,
+    "current_ltp": 366.4,
+    "status": "No"
+  },
+  {
+    "symbol": "PERSISTENT",
+    "avg_buy": 5470.5,
+    "qty": 1,
+    "added_date": "2026-06-02",
+    "target": 6017.55,
     "current_ltp": 0,
     "status": "No"
   }
